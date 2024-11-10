@@ -146,8 +146,14 @@ function determineTrickWinner(trick, trumpSuit) {
 
 function calculateTrickPoints(trick) {
     const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2 };
-    return trick.reduce((total, play) => total + (cardPoints[play.card[0]] || 0), 0);
+    return trick.reduce((total, play) => {
+        // Get the value of the card (e.g., 'A', '10', etc.)
+        const cardValue = play.card.slice(0, -1);
+        // Add the points for the card to the total
+        return total + (cardPoints[cardValue] || 0);
+    }, 0);
 }
+
 
 module.exports = {
     shuffleDeck,
