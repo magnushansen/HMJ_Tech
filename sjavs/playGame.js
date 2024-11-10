@@ -67,13 +67,15 @@ function calculateFinalScore(team1Points, team2Points, trumpSuit) {
 }
 
 // Function to play a single trick
-function playTrick(hands, gameState) {
+function playTrick(hands, gameState, startingPlayerIndex) {
     console.log("Playing a trick...");
     gameState.currentTrick = [];
     gameState.leadingSuit = null;
 
+    // Start the trick with the player who won the last trick
     for (let i = 0; i < 4; i++) {
-        const playerHand = hands[i];
+        const playerIndex = (startingPlayerIndex + i) % 4; // Rotate starting from the specified player
+        const playerHand = hands[playerIndex];
 
         // Determine which card to play
         let card;
@@ -92,9 +94,9 @@ function playTrick(hands, gameState) {
 
         const suit = getCardSuit(card);
         const value = getCardValue(card);
-        console.log(`Player ${i + 1} plays ${card} (Suit: ${suit}, Value: ${value})`);
+        console.log(`Player ${playerIndex + 1} plays ${card} (Suit: ${suit}, Value: ${value})`);
 
-        gameState.currentTrick.push({ player: i, card });
+        gameState.currentTrick.push({ player: playerIndex, card });
     }
 
     const trickWinner = determineTrickWinner(gameState.currentTrick, gameState.trumpSuit);
@@ -106,6 +108,8 @@ function playTrick(hands, gameState) {
 
     console.log(`Points for this trick: ${trickPoints}`);
     console.log(`Current Score - Team 1: ${gameState.scores[0]}, Team 2: ${gameState.scores[1]}\n`);
+
+    return trickWinner; // Return the index of the player who won the trick
 }
 
 // Main game loop
@@ -135,10 +139,13 @@ while (!gameEnded) {
         trumpSuit
     };
 
+    // Start with Player 1 as the first leader of the round
+    let currentLeader = 0;
+
     // Play four tricks in a round
     for (let i = 0; i < 4; i++) {
         console.log(`--- Trick ${i + 1} ---`);
-        playTrick(hands, gameState);
+        currentLeader = playTrick(hands, gameState, currentLeader); // Update leader after each trick
     }
 
     // Calculate final scores for the round
