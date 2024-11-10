@@ -5,79 +5,47 @@ const {
     getCardValue,
     playerHasSuit,
     determineTrickWinner,
-    calculateTrickPoints
+    calculateTrickPoints,
+    chooseTrump
 } = require('./lib/gameUtils');
 
 console.log("Starting the game...");
 
-// Step 1: Initialize the Game
-let deck, hands, trumpSuit;
-
-function chooseTrump(hands) {
-    let potentialTrumps = [];
-
-    hands.forEach((hand, index) => {
-        const suitCounts = { '♠': 0, '♥': 0, '♦': 0, '♣': 0 };
-
-        // Count the number of each suit in the player's hand
-        hand.forEach(card => {
-            const suit = getCardSuit(card);
-            suitCounts[suit]++;
-        });
-
-        // Find the longest suit for this player
-        const maxSuitLength = Math.max(...Object.values(suitCounts));
-        const longestSuits = Object.keys(suitCounts).filter(suit => suitCounts[suit] === maxSuitLength);
-
-        potentialTrumps.push({
-            player: index,
-            longestSuits,
-            maxSuitLength
-        });
-    });
-
-    // Find the player with the longest suit across all players
-    const maxTrumpLength = Math.max(...potentialTrumps.map(p => p.maxSuitLength));
-    const trumpCandidates = potentialTrumps.filter(p => p.maxSuitLength === maxTrumpLength);
-
-    if (maxTrumpLength < 5) {
-        // If no one has a suit of 5 or more cards, trigger a re-deal
-        console.log("No player has a trump holding of five or more cards. Re-dealing...");
-        return null; // Signal to re-deal
-    }
-
-    // If multiple players have the longest suit length, choose the first player in the list
-    const trumpPlayer = trumpCandidates[0];
-    const trumpSuit = trumpPlayer.longestSuits.includes('♣') ? '♣' : trumpPlayer.longestSuits[0];
-    console.log(`Player ${trumpPlayer.player + 1} announces the trump suit as ${trumpSuit}`);
-    
-    return trumpSuit;
-}
-
-// Repeat dealing until a valid trump suit is chosen
-do {
-    deck = shuffleDeck();
-    hands = dealCards(deck);
-
-    // Determine the trump suit based on the longest suit rule
-    trumpSuit = chooseTrump(hands);
-
-} while (!trumpSuit);
-
-console.log(`The trump suit for this round is ${trumpSuit}.`);
-
-// Define game state
-const gameState = {
-    currentTrick: [],
-    leadingSuit: null,
-    scores: [0, 0], // Team 1 (Players 1 & 3) and Team 2 (Players 2 & 4)
-    trumpSuit // Assign trumpSuit to the game state
+// Initialize Score Sheet
+const scoreSheet = {
+    "We": 24,
+    "They": 24,
 };
 
-// Display each player's hand
-hands.forEach((hand, index) => {
-    console.log(`Player ${index + 1} hand: ${hand.join(', ')}`);
-});
+function printScoreSheet() {
+    console.log("\nScore Sheet:");
+    console.log("-------------");
+    console.log(`| We   | They |`);
+    console.log("-------------");
+    console.log(`| ${scoreSheet["We"].toString().padEnd(4)} | ${scoreSheet["They"].toString().padEnd(4)} |`);
+    console.log("-------------");
+    if (scoreSheet["We"] === 6) console.log("We are on the hook!");
+    if (scoreSheet["They"] === 6) console.log("They are on the hook!");
+    console.log("");
+}
+
+// Function to update the score sheet
+function updateScoreSheet(winningTeam, points) {
+    scoreSheet[winningTeam] -= points;
+
+    // Check if a team has won the rubber
+    if (scoreSheet[winningTeam] <= 0) {
+        const losingTeam = winningTeam === "We" ? "They" : "We";
+        if (scoreSheet[losingTeam] === 24) {
+            console.log(`${winningTeam} has won a double victory!`);
+        }
+        console.log(`${winningTeam} has won the rubber!`);
+        console.log("Recording a cross at the bottom of the score sheet.");
+        printScoreSheet();
+        return true; // Signal game end
+    }
+    return false; // Continue game if no team has won
+}
 
 // Function to calculate the final score based on the rules
 function calculateFinalScore(team1Points, team2Points, trumpSuit) {
@@ -99,7 +67,7 @@ function calculateFinalScore(team1Points, team2Points, trumpSuit) {
 }
 
 // Function to play a single trick
-function playTrick() {
+function playTrick(hands, gameState) {
     console.log("Playing a trick...");
     gameState.currentTrick = [];
     gameState.leadingSuit = null;
@@ -129,7 +97,7 @@ function playTrick() {
         gameState.currentTrick.push({ player: i, card });
     }
 
-    const trickWinner = determineTrickWinner(gameState.currentTrick, trumpSuit);
+    const trickWinner = determineTrickWinner(gameState.currentTrick, gameState.trumpSuit);
     console.log(`Player ${trickWinner + 1} wins the trick!`);
 
     const trickPoints = calculateTrickPoints(gameState.currentTrick);
@@ -140,26 +108,53 @@ function playTrick() {
     console.log(`Current Score - Team 1: ${gameState.scores[0]}, Team 2: ${gameState.scores[1]}\n`);
 }
 
-// Start the round of playing tricks
-console.log("Starting the round...\n");
-for (let i = 0; i < 4; i++) { // Simulate 4 tricks in a round
-    console.log(`--- Trick ${i + 1} ---`);
-    playTrick();
+// Main game loop
+let gameEnded = false;
+while (!gameEnded) {
+    console.log("\nStarting a new round...\n");
+
+    // Initialize hands and determine trump suit
+    let hands, trumpSuit;
+    do {
+        const deck = shuffleDeck();
+        hands = dealCards(deck);
+        trumpSuit = chooseTrump(hands);
+    } while (!trumpSuit);
+
+    // Display each player's hand after trump suit is determined
+    console.log("\nPlayer Hands (after trump is chosen):");
+    hands.forEach((hand, index) => {
+        console.log(`Player ${index + 1}: ${hand.join(', ')}`);
+    });
+    console.log(""); // Add a blank line for readability
+
+    const gameState = {
+        currentTrick: [],
+        leadingSuit: null,
+        scores: [0, 0], // Team 1 (Players 1 & 3) and Team 2 (Players 2 & 4)
+        trumpSuit
+    };
+
+    // Play four tricks in a round
+    for (let i = 0; i < 4; i++) {
+        console.log(`--- Trick ${i + 1} ---`);
+        playTrick(hands, gameState);
+    }
+
+    // Calculate final scores for the round
+    const team1Score = gameState.scores[0];
+    const team2Score = gameState.scores[1];
+    const [team1FinalScore, team2FinalScore] = calculateFinalScore(team1Score, team2Score, trumpSuit);
+
+    // Update the score sheet based on the round result
+    if (team1FinalScore > team2FinalScore) {
+        gameEnded = updateScoreSheet("We", team1FinalScore);
+    } else if (team2FinalScore > team1FinalScore) {
+        gameEnded = updateScoreSheet("They", team2FinalScore);
+    }
+
+    // Print the updated score sheet after each round
+    printScoreSheet();
 }
 
-// Determine Round Winner
-console.log("Round over!");
-const team1Score = gameState.scores[0];
-const team2Score = gameState.scores[1];
-
-// Calculate final scores based on the game rules
-const [team1FinalScore, team2FinalScore] = calculateFinalScore(team1Score, team2Score, trumpSuit);
-
-// Display the final result based on calculated scores
-if (team1FinalScore > team2FinalScore) {
-    console.log(`Team 1 wins the round with ${team1FinalScore} points!`);
-} else if (team2FinalScore > team1FinalScore) {
-    console.log(`Team 2 wins the round with ${team2FinalScore} points!`);
-} else {
-    console.log("It's a tie!");
-}
+console.log("Game over!");

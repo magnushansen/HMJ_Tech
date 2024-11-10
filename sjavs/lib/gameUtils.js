@@ -1,4 +1,3 @@
-// lib/gameUtils.js
 function shuffleDeck() {
     const suits = ['♠', '♥', '♦', '♣'];
     const values = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -19,8 +18,6 @@ function shuffleDeck() {
     return deck;
 }
 
-
-
 function dealCards(deck) {
     const hands = [[], [], [], []];
     for (let i = 0; i < 8; i++) {
@@ -28,7 +25,6 @@ function dealCards(deck) {
     }
     return hands;
 }
-
 
 function getCardSuit(card) {
     return card.slice(-1); // Returns the last character, e.g., '♠'
@@ -43,7 +39,6 @@ function getCardValue(card) {
 function playerHasSuit(hand, suit) {
     return hand.some(card => getCardSuit(card) === suit);
 }
-
 
 function chooseTrump(hands) {
     const suits = ['♠', '♥', '♦', '♣'];
@@ -69,129 +64,83 @@ function chooseTrump(hands) {
             }
         }
 
-        // If the player has 5 or more cards in the longest suit, they are a trump candidate
-        if (maxCount >= 5) {
-            trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
-        }
+        // Add the player as a trump candidate based on their longest suit
+        trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
     });
-
-    console.log("Trump Candidates:", trumpCandidates);
-
-    // If no player has a strong suit, randomly select a trump suit
-    if (trumpCandidates.length === 0) {
-        const randomSuit = suits[Math.floor(Math.random() * suits.length)];
-        console.log("No strong suit found, choosing random trump:", randomSuit);
-        return { trumpSuit: randomSuit, trumpPlayer: null }; // Return random suit as trump
-    }
 
     // Sort candidates by suit count, prioritizing the player with the most cards in a suit
     trumpCandidates.sort((a, b) => b.count - a.count);
 
-    // Choose the suit of the top candidate as the trump suit
-    const chosenTrump = trumpCandidates[0].suit;
-    const trumpPlayer = trumpCandidates[0].playerIndex;
-    console.log("Chosen Trump Suit:", chosenTrump);
-    return { trumpSuit: chosenTrump, trumpPlayer };
-}
-
-function determineTrumpSuit(hands) {
-    let potentialTrumps = []; // To store each player's longest suit info
-
-    hands.forEach((hand, index) => {
-        const suitCounts = { '♠': 0, '♥': 0, '♦': 0, '♣': 0 };
-
-        // Count the number of each suit in the player's hand
-        hand.forEach(card => {
-            const suit = getCardSuit(card);
-            suitCounts[suit]++;
-        });
-
-        // Find the longest suit for this player
-        const maxSuitLength = Math.max(...Object.values(suitCounts));
-        const longestSuits = Object.keys(suitCounts).filter(suit => suitCounts[suit] === maxSuitLength);
-
-        potentialTrumps.push({
-            player: index,
-            longestSuits,
-            maxSuitLength
-        });
-    });
-
-    // Find the player with the longest suit across all players
-    const maxTrumpLength = Math.max(...potentialTrumps.map(p => p.maxSuitLength));
-    const trumpCandidates = potentialTrumps.filter(p => p.maxSuitLength === maxTrumpLength);
-
-    if (maxTrumpLength < 5) {
-        // If no one has a suit of 5 or more cards, trigger a re-deal
+    if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
         return null; // Signal to re-deal
     }
 
-    // If multiple players have the longest suit length, choose the first player in the list
-    const trumpPlayer = trumpCandidates[0];
-    const trumpSuit = trumpPlayer.longestSuits.includes('♣') ? '♣' : trumpPlayer.longestSuits[0];
-    console.log(`Player ${trumpPlayer.player + 1} announces the trump suit as ${trumpSuit}`);
-    
-    return trumpSuit;
+    // Choose the suit of the top candidate as the trump suit
+    const chosenTrump = trumpCandidates[0].suit === '♣' || trumpCandidates[0].count > trumpCandidates[1]?.count
+        ? trumpCandidates[0].suit
+        : '♣';
+
+    console.log(`Player ${trumpCandidates[0].playerIndex + 1} announces the trump suit as ${chosenTrump}`);
+    return { trumpSuit: chosenTrump, trumpPlayer: trumpCandidates[0].playerIndex };
 }
-
-
-
-
-function playCard(player, card, gameState) {
-    if (gameState.currentTrick.length === 0) {
-        gameState.leadingSuit = getCardSuit(card);
-    }
-
-    const cardSuit = getCardSuit(card);
-    
-    // Enforce following suit if possible
-    if (cardSuit !== gameState.leadingSuit && playerHasSuit(player.hand, gameState.leadingSuit)) {
-        throw new Error(`Player ${player} must follow suit. They have ${gameState.leadingSuit} in hand.`);
-    }
-    
-    gameState.currentTrick.push({ player, card });
-}
-
 
 function determineTrickWinner(trick, trumpSuit) {
-    // Define the trump hierarchy
-    const trumpHierarchy = ['♣Q', '♠Q', '♣J', '♠J', '♥J', '♦J'];
+    // Define the permanent trump hierarchy in the correct order
+    const permanentTrumpHierarchy = ['Q♣', 'Q♠', 'J♣', 'J♠', 'J♥', 'J♦'];
 
+    // Helper function to check if a card is a permanent trump
+    function isPermanentTrump(card) {
+        const isTrump = permanentTrumpHierarchy.includes(card);
+        console.log(`Checking if ${card} is a permanent trump: ${isTrump}`);
+        return isTrump;
+    }
+
+    console.log("\n--- Determining Trick Winner ---");
+    console.log("Trump Suit:", trumpSuit);
+    console.log("Trick Played:");
+    trick.forEach(play => console.log(`Player ${play.player + 1} plays ${play.card}`));
+
+    // Step 1: Identify any permanent trump cards played in this trick
+    const permanentTrumpsPlayed = trick.filter(play => isPermanentTrump(play.card));
+    console.log("Permanent Trumps Played:", permanentTrumpsPlayed.map(play => play.card));
+
+    if (permanentTrumpsPlayed.length > 0) {
+        // Sort permanent trumps based on the permanent trump hierarchy
+        permanentTrumpsPlayed.sort((a, b) => permanentTrumpHierarchy.indexOf(a.card) - permanentTrumpHierarchy.indexOf(b.card));
+        const highestPermanentTrump = permanentTrumpsPlayed[0];
+        console.log("Highest Permanent Trump Played:", highestPermanentTrump.card, "by Player", highestPermanentTrump.player + 1);
+        return highestPermanentTrump.player;
+    }
+
+    // Step 2: No permanent trumps were played, so follow trump suit and leading suit rules
     let winningCard = trick[0].card;
     let winningPlayer = trick[0].player;
+    console.log("Initial Winning Card:", winningCard, "by Player", winningPlayer + 1);
 
     for (const play of trick) {
         const { player, card } = play;
+        const cardSuit = getCardSuit(card);
 
-        if (trumpHierarchy.includes(card)) {
-            // If the card is in the trump hierarchy, check if it's stronger than the current winning card
-            if (!trumpHierarchy.includes(winningCard) || trumpHierarchy.indexOf(card) < trumpHierarchy.indexOf(winningCard)) {
-                winningCard = card;
-                winningPlayer = player;
-            }
-        } else if (getCardSuit(card) === trumpSuit) {
-            // Regular trump cards, check if winningCard is a trump or if the card is higher
+        if (cardSuit === trumpSuit) {
+            // If the current card is a trump card, it wins over non-trump cards
             if (getCardSuit(winningCard) !== trumpSuit || getCardValue(card) > getCardValue(winningCard)) {
                 winningCard = card;
                 winningPlayer = player;
+                console.log("New Winning Trump Card:", winningCard, "by Player", winningPlayer + 1);
             }
-        } else if (getCardSuit(card) === getCardSuit(winningCard) && getCardValue(card) > getCardValue(winningCard)) {
-            // Non-trump, follow suit and check value
+        } else if (cardSuit === getCardSuit(winningCard) && getCardValue(card) > getCardValue(winningCard)) {
+            // If the card matches the leading suit, compare its value to the current winning card
             winningCard = card;
             winningPlayer = player;
+            console.log("New Winning Leading Suit Card:", winningCard, "by Player", winningPlayer + 1);
         }
     }
+
+    console.log("Trick Winner: Player", winningPlayer + 1, "with Card:", winningCard);
     return winningPlayer;
 }
 
-function isRedSuit(suit) {
-    return suit === '♥' || suit === '♦';
-}
-
-function countTrumps(trumpSuit) {
-    return isRedSuit(trumpSuit) ? 13 : 12;
-}
 
 
 
@@ -200,15 +149,14 @@ function calculateTrickPoints(trick) {
     return trick.reduce((total, play) => total + (cardPoints[play.card[0]] || 0), 0);
 }
 
-
 module.exports = {
     shuffleDeck,
     dealCards,
     getCardSuit,
     getCardValue,
     chooseTrump,
-    playCard,
     determineTrickWinner,
     calculateTrickPoints,
     playerHasSuit
 };
+
