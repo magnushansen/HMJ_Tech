@@ -1,0 +1,6 @@
+Koyrir servarin á local host 3000
+
+npm run dev
+
+
+node playgame.js
