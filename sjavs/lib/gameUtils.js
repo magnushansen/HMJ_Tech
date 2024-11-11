@@ -32,8 +32,14 @@ function getCardSuit(card) {
 
 function getCardValue(card) {
     const value = card.slice(0, -1);
-    const cardPoints = { 'A': 11, 'K': 4, 'Q': 3, 'J': 2, '10': 10 };
-    return cardPoints[value] || 0;
+    const cardPoints = { 'A': 11, 'K': 4, 'Q': 3, 'J': 2, '10': 10, '9': 0, '8': 0, '7': 0 };
+    return cardPoints[value] || 0; // Returns 0 for cards that don't score points
+}
+
+function getCardRank(card) {
+    const value = card.slice(0, -1);
+    const cardRankings = { 'A': 8, 'K': 7, 'Q': 6, 'J': 5, '10': 4, '9': 3, '8': 2, '7': 1 };
+    return cardRankings[value];
 }
 
 function playerHasSuit(hand, suit) {
@@ -124,13 +130,13 @@ function determineTrickWinner(trick, trumpSuit) {
 
         if (cardSuit === trumpSuit) {
             // If the current card is a trump card, it wins over non-trump cards
-            if (getCardSuit(winningCard) !== trumpSuit || getCardValue(card) > getCardValue(winningCard)) {
+            if (getCardSuit(winningCard) !== trumpSuit || getCardRank(card) > getCardRank(winningCard)) {
                 winningCard = card;
                 winningPlayer = player;
                 console.log("New Winning Trump Card:", winningCard, "by Player", winningPlayer + 1);
             }
-        } else if (cardSuit === getCardSuit(winningCard) && getCardValue(card) > getCardValue(winningCard)) {
-            // If the card matches the leading suit, compare its value to the current winning card
+        } else if (cardSuit === getCardSuit(winningCard) && getCardRank(card) > getCardRank(winningCard)) {
+            // If the card matches the leading suit, compare its rank to the current winning card
             winningCard = card;
             winningPlayer = player;
             console.log("New Winning Leading Suit Card:", winningCard, "by Player", winningPlayer + 1);
@@ -141,11 +147,8 @@ function determineTrickWinner(trick, trumpSuit) {
     return winningPlayer;
 }
 
-
-
-
 function calculateTrickPoints(trick) {
-    const cardPoints = { 'A': 11, '10': 10, '9': 9, '8' : 8, '7' : 7, 'K': 4, 'Q': 3, 'J': 2 };
+    const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2 };
     return trick.reduce((total, play) => {
         // Get the value of the card (e.g., 'A', '10', etc.)
         const cardValue = play.card.slice(0, -1);
@@ -154,15 +157,14 @@ function calculateTrickPoints(trick) {
     }, 0);
 }
 
-
 module.exports = {
     shuffleDeck,
     dealCards,
     getCardSuit,
     getCardValue,
+    getCardRank,
     chooseTrump,
     determineTrickWinner,
     calculateTrickPoints,
     playerHasSuit
 };
-
