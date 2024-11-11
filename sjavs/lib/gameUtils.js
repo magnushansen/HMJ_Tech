@@ -145,7 +145,7 @@ function determineTrickWinner(trick, trumpSuit) {
 
 
 function calculateTrickPoints(trick) {
-    const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2 };
+    const cardPoints = { 'A': 11, '10': 10, '9': 9, '8' : 8, '7' : 7, 'K': 4, 'Q': 3, 'J': 2 };
     return trick.reduce((total, play) => {
         // Get the value of the card (e.g., 'A', '10', etc.)
         const cardValue = play.card.slice(0, -1);
