@@ -143,7 +143,7 @@ while (!gameEnded) {
     let currentLeader = 0;
 
     // Play four tricks in a round
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 8; i++) {
         console.log(`--- Trick ${i + 1} ---`);
         currentLeader = playTrick(hands, gameState, currentLeader); // Update leader after each trick
     }
