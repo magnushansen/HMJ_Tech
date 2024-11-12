@@ -1,4 +1,6 @@
-const {
+// playGame.js
+
+import {
     shuffleDeck,
     dealCards,
     getCardSuit,
@@ -7,64 +9,11 @@ const {
     determineTrickWinner,
     calculateTrickPoints,
     chooseTrump
-} = require('./lib/gameUtils');
+} from './lib/gameUtils.js';
+
+import { updateScoreSheet, calculateFinalScore, printScoreSheet, resetDoubleNextGameScore } from './lib/scoring.js';
 
 console.log("Starting the game...");
-
-// Initialize Score Sheet
-const scoreSheet = {
-    "We": 24,
-    "They": 24,
-};
-
-function printScoreSheet() {
-    console.log("\nScore Sheet:");
-    console.log("-------------");
-    console.log(`| We   | They |`);
-    console.log("-------------");
-    console.log(`| ${scoreSheet["We"].toString().padEnd(4)} | ${scoreSheet["They"].toString().padEnd(4)} |`);
-    console.log("-------------");
-    if (scoreSheet["We"] === 6) console.log("We are on the hook!");
-    if (scoreSheet["They"] === 6) console.log("They are on the hook!");
-    console.log("");
-}
-
-// Function to update the score sheet
-function updateScoreSheet(winningTeam, points) {
-    scoreSheet[winningTeam] -= points;
-
-    // Check if a team has won the rubber
-    if (scoreSheet[winningTeam] <= 0) {
-        const losingTeam = winningTeam === "We" ? "They" : "We";
-        if (scoreSheet[losingTeam] === 24) {
-            console.log(`${winningTeam} has won a double victory!`);
-        }
-        console.log(`${winningTeam} has won the rubber!`);
-        console.log("Recording a cross at the bottom of the score sheet.");
-        printScoreSheet();
-        return true; // Signal game end
-    }
-    return false; // Continue game if no team has won
-}
-
-// Function to calculate the final score based on the rules
-function calculateFinalScore(team1Points, team2Points, trumpSuit) {
-    const CLUB_TRUMP_MULTIPLIER = trumpSuit === '♣' ? 2 : 1;
-
-    if (team1Points === 120) {
-        return [12 * CLUB_TRUMP_MULTIPLIER, 0];
-    } else if (team1Points >= 90) {
-        return [4 * CLUB_TRUMP_MULTIPLIER, 0];
-    } else if (team1Points >= 61) {
-        return [2 * CLUB_TRUMP_MULTIPLIER, 0];
-    } else if (team1Points >= 31) {
-        return [0, 4 * CLUB_TRUMP_MULTIPLIER];
-    } else if (team1Points >= 0) {
-        return [0, 8 * CLUB_TRUMP_MULTIPLIER];
-    } else {
-        return [0, 16 * CLUB_TRUMP_MULTIPLIER];
-    }
-}
 
 // Function to play a single trick
 function playTrick(hands, gameState, startingPlayerIndex) {
@@ -142,7 +91,7 @@ while (!gameEnded) {
     // Start with Player 1 as the first leader of the round
     let currentLeader = 0;
 
-    // Play four tricks in a round
+    // Play eight tricks in a round
     for (let i = 0; i < 8; i++) {
         console.log(`--- Trick ${i + 1} ---`);
         currentLeader = playTrick(hands, gameState, currentLeader); // Update leader after each trick
@@ -155,8 +104,10 @@ while (!gameEnded) {
 
     // Update the score sheet based on the round result
     if (team1FinalScore > team2FinalScore) {
+        resetDoubleNextGameScore(); // Reset multiplier if there was no tie
         gameEnded = updateScoreSheet("We", team1FinalScore);
     } else if (team2FinalScore > team1FinalScore) {
+        resetDoubleNextGameScore(); // Reset multiplier if there was no tie
         gameEnded = updateScoreSheet("They", team2FinalScore);
     }
 

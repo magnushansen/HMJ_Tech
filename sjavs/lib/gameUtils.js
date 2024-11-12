@@ -1,3 +1,5 @@
+//gameutils.js
+
 function shuffleDeck() {
     const suits = ['♠', '♥', '♦', '♣'];
     const values = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -157,7 +159,7 @@ function calculateTrickPoints(trick) {
     }, 0);
 }
 
-module.exports = {
+export {
     shuffleDeck,
     dealCards,
     getCardSuit,
