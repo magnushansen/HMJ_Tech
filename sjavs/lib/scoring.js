@@ -1,41 +1,19 @@
 // lib/scoring.js
 
+import { printScoreSheet, updateScore, checkForRubberWin } from './scoreSheet.js';
+
 let doubleNextGameScore = false; // Keeps track if the next game's score should be doubled
 
-// Initialize Score Sheet
-const scoreSheet = {
-    "We": 24,
-    "They": 24,
-};
-
-export function printScoreSheet() {
-    console.log("\nScore Sheet:");
-    console.log("-------------");
-    console.log(`| We   | They |`);
-    console.log("-------------");
-    console.log(`| ${scoreSheet["We"].toString().padEnd(4)} | ${scoreSheet["They"].toString().padEnd(4)} |`);
-    console.log("-------------");
-    if (scoreSheet["We"] === 6) console.log("We are on the hook!");
-    if (scoreSheet["They"] === 6) console.log("They are on the hook!");
-    console.log("");
-}
-
-// Function to update the score sheet
+// Function to update the score sheet based on the winning team and points scored
 export function updateScoreSheet(winningTeam, points) {
-    scoreSheet[winningTeam] -= points;
+    updateScore(winningTeam, points); // Update score using scoreSheet.js
 
     // Check if a team has won the rubber
-    if (scoreSheet[winningTeam] <= 0) {
-        const losingTeam = winningTeam === "We" ? "They" : "We";
-        if (scoreSheet[losingTeam] === 24) {
-            console.log(`${winningTeam} has won a double victory!`);
-        }
-        console.log(`${winningTeam} has won the rubber!`);
-        console.log("Recording a cross at the bottom of the score sheet.");
+    const gameEnded = checkForRubberWin(winningTeam);
+    if (gameEnded) {
         printScoreSheet();
-        return true; // Signal game end
     }
-    return false; // Continue game if no team has won
+    return gameEnded;
 }
 
 // Function to calculate the final score based on the rules

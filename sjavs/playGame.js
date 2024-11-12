@@ -11,9 +11,11 @@ import {
     chooseTrump
 } from './lib/gameUtils.js';
 
-import { updateScoreSheet, calculateFinalScore, printScoreSheet, resetDoubleNextGameScore } from './lib/scoring.js';
+import { updateScoreSheet, calculateFinalScore, resetDoubleNextGameScore } from './lib/scoring.js';
+import { printScoreSheet } from './lib/scoreSheet.js';  // Import printScoreSheet directly from scoreSheet.js
 
 console.log("Starting the game...");
+
 
 // Function to play a single trick
 function playTrick(hands, gameState, startingPlayerIndex) {
