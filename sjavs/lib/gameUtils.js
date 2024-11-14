@@ -11,7 +11,6 @@ function shuffleDeck() {
         }
     }
 
-    // Shuffle the deck
     for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -29,13 +28,13 @@ function dealCards(deck) {
 }
 
 function getCardSuit(card) {
-    return card.slice(-1); // Returns the last character, e.g., '♠'
+    return card.slice(-1); 
 }
 
 function getCardValue(card) {
     const value = card.slice(0, -1);
     const cardPoints = { 'A': 11, 'K': 4, 'Q': 3, 'J': 2, '10': 10, '9': 0, '8': 0, '7': 0 };
-    return cardPoints[value] || 0; // Returns 0 for cards that don't score points
+    return cardPoints[value] || 0; 
 }
 
 function getCardRank(card) {
@@ -55,13 +54,11 @@ function chooseTrump(hands) {
     hands.forEach((hand, playerIndex) => {
         const suitCounts = { '♠': 0, '♥': 0, '♦': 0, '♣': 0 };
 
-        // Count the number of cards in each suit for the player
         hand.forEach(card => {
             const suit = getCardSuit(card);
             suitCounts[suit]++;
         });
 
-        // Determine the longest suit in the player's hand
         let longestSuit = null;
         let maxCount = 0;
 
