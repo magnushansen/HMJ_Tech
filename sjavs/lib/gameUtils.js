@@ -53,11 +53,11 @@ function getCardRank(card) {
     return cardRankings[value];
 }
 
-function getCardRankOrder(card) {
-    const value = card.slice(0, -1);
-    const cardRankings = { 'A': 10, 'K': 9, 'Q': 8, 'J': 7, '10': 6, '9': 5, '8': 4, '7': 3 };
-    return cardRankings[value];
-}
+// function getCardRankOrder(card) {
+//     const value = card.slice(0, -1);
+//     const cardRankings = { 'A': 10, 'K': 9, 'Q': 8, 'J': 7, '10': 6, '9': 5, '8': 4, '7': 3 };
+//     return cardRankings[value];
+// }
 
 
 function playerHasSuit(hand, suit) {
@@ -144,12 +144,12 @@ function determineTrickWinner(trick, trumpSuit) {
         
         if (cardSuit === trumpSuit.trumpSuit) {
             // If the current card is a trump card, it wins over non-trump cards
-            if (getCardRankOrder(card) > getCardRankOrder(winningCard)) {                
+            if (getCardRank(card) > getCardRank(winningCard)) {                
                 winningCard = card;
                 winningPlayer = player;
                 console.log("New Winning Trump Card:", winningCard, "by Player", winningPlayer + 1);
             }
-        } else if (getCardSuit(winningCard) != trumpSuit.trumpSuit && getCardRankOrder(card) > getCardRankOrder(winningCard)) {
+        } else if (getCardSuit(winningCard) != trumpSuit.trumpSuit && getCardRank(card) > getCardRank(winningCard)) {
             // If the card matches the leading suit, compare its rank to the current winning card
             winningCard = card;
             winningPlayer = player;
