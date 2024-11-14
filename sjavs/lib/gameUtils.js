@@ -19,10 +19,20 @@ function shuffleDeck() {
     return deck;
 }
 
+// function dealCards(deck) {
+//     const hands = [[], [], [], []];
+//     for (let i = 0; i < 8; i++) {
+//         hands.forEach(hand => hand.push(deck.pop()));
+//     }
+//     return hands;
+// }
+
 function dealCards(deck) {
     const hands = [[], [], [], []];
     for (let i = 0; i < 8; i++) {
-        hands.forEach(hand => hand.push(deck.pop()));
+        for (let j = 0; j < 4; j++) { 
+            hands[j].push(deck.pop());
+        }
     }
     return hands;
 }
@@ -42,6 +52,13 @@ function getCardRank(card) {
     const cardRankings = { 'A': 8, 'K': 7, 'Q': 6, 'J': 5, '10': 4, '9': 3, '8': 2, '7': 1 };
     return cardRankings[value];
 }
+
+// function getCardRankOrder(card) {
+//     const value = card.slice(0, -1);
+//     const cardRankings = { 'A': 10, 'K': 9, 'Q': 8, 'J': 7, '10': 6, '9': 5, '8': 4, '7': 3 };
+//     return cardRankings[value];
+// }
+
 
 function playerHasSuit(hand, suit) {
     return hand.some(card => getCardSuit(card) === suit);
@@ -91,7 +108,6 @@ function chooseTrump(hands) {
 }
 
 function determineTrickWinner(trick, trumpSuit) {
-
     const permanentTrumpHierarchy = ['Q♣', 'Q♠', 'J♣', 'J♠', 'J♥', 'J♦'];
 
     function isPermanentTrump(card) {
@@ -125,15 +141,15 @@ function determineTrickWinner(trick, trumpSuit) {
     for (const play of trick) {
         const { player, card } = play;
         const cardSuit = getCardSuit(card);
-
-        if (cardSuit === trumpSuit) {
+        
+        if (cardSuit === trumpSuit.trumpSuit) {
             // If the current card is a trump card, it wins over non-trump cards
-            if (getCardSuit(winningCard) !== trumpSuit || getCardRank(card) > getCardRank(winningCard)) {
+            if (getCardRank(card) > getCardRank(winningCard)) {                
                 winningCard = card;
                 winningPlayer = player;
                 console.log("New Winning Trump Card:", winningCard, "by Player", winningPlayer + 1);
             }
-        } else if (cardSuit === getCardSuit(winningCard) && getCardRank(card) > getCardRank(winningCard)) {
+        } else if (getCardSuit(winningCard) != trumpSuit.trumpSuit && getCardRank(card) > getCardRank(winningCard)) {
             // If the card matches the leading suit, compare its rank to the current winning card
             winningCard = card;
             winningPlayer = player;
