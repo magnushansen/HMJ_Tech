@@ -1,4 +1,5 @@
-// components/Card.tsx
+"use client"; // This directive makes this a client component
+
 import React from 'react';
 import styles from './Card.module.css';
 
@@ -9,19 +10,16 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ rank, suit }) => {
   const imageName = `${rank}_of_${suit}.png`;
-
-  // Dynamically import the image
-  let imageSrc;
-  try {
-    imageSrc = require(`assets/${imageName}`);
-  } catch (error) {
-    console.error(`Image not found: ${imageName}`, error);
-    return <div className={styles.card}>Card image not found</div>;
-  }
+  const imageSrc = `/assets/${imageName}`; // Use direct path to public assets
 
   return (
     <div className={styles.card}>
-      <img src={imageSrc} alt={`${rank} of ${suit}`} className={styles.cardImage} />
+      <img
+        src={imageSrc}
+        alt={`${rank} of ${suit}`}
+        className={styles.cardImage}
+        onError={(e) => (e.currentTarget.style.display = 'none')} // Hide if image not found
+      />
     </div>
   );
 };
