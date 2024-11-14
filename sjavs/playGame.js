@@ -12,7 +12,7 @@ import {
 } from './lib/gameUtils.js';
 
 import { updateScoreSheet, calculateFinalScore, resetDoubleNextGameScore } from './lib/scoring.js';
-import { printScoreSheet } from './lib/scoreSheet.js';  // Import printScoreSheet directly from scoreSheet.js
+import { printScoreSheet } from './lib/scoreSheet.js'; 
 
 console.log("Starting the game...");
 
@@ -68,7 +68,6 @@ let gameEnded = false;
 while (!gameEnded) {
     console.log("\nStarting a new round...\n");
 
-    // Initialize hands and determine trump suit
     let hands, trumpSuit;
     do {
         const deck = shuffleDeck();
@@ -76,12 +75,11 @@ while (!gameEnded) {
         trumpSuit = chooseTrump(hands);
     } while (!trumpSuit);
 
-    // Display each player's hand after trump suit is determined
     console.log("\nPlayer Hands (after trump is chosen):");
     hands.forEach((hand, index) => {
         console.log(`Player ${index + 1}: ${hand.join(', ')}`);
     });
-    console.log(""); // Add a blank line for readability
+    console.log(""); 
 
     const gameState = {
         currentTrick: [],
@@ -90,30 +88,25 @@ while (!gameEnded) {
         trumpSuit
     };
 
-    // Start with Player 1 as the first leader of the round
     let currentLeader = 0;
 
-    // Play eight tricks in a round
     for (let i = 0; i < 8; i++) {
         console.log(`--- Trick ${i + 1} ---`);
         currentLeader = playTrick(hands, gameState, currentLeader); // Update leader after each trick
     }
 
-    // Calculate final scores for the round
     const team1Score = gameState.scores[0];
     const team2Score = gameState.scores[1];
     const [team1FinalScore, team2FinalScore] = calculateFinalScore(team1Score, team2Score, trumpSuit);
 
-    // Update the score sheet based on the round result
     if (team1FinalScore > team2FinalScore) {
         resetDoubleNextGameScore(); // Reset multiplier if there was no tie
         gameEnded = updateScoreSheet("We", team1FinalScore);
     } else if (team2FinalScore > team1FinalScore) {
-        resetDoubleNextGameScore(); // Reset multiplier if there was no tie
+        resetDoubleNextGameScore(); 
         gameEnded = updateScoreSheet("They", team2FinalScore);
     }
 
-    // Print the updated score sheet after each round
     printScoreSheet();
 }
 
