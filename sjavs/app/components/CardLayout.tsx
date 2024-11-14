@@ -4,8 +4,9 @@ import React from 'react';
 import Card from './Cards';
 import styles from './CardLayout.module.css';
 
-const suits = ['♠', '♥', '♦', '♣'];
-const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+const suits = ['spades', 'hearts', 'diamonds', 'spades'];
+const ranks = ['ace', '6', '7', '8', '9', '10', 'jack', 'queen', 'king'];
+const imageName = `${ranks}_of_${suits}.png`;
 
 const CardLayout: React.FC = () => {
   return (
@@ -18,5 +19,5 @@ const CardLayout: React.FC = () => {
     </div>
   );
 };
-
+// 
 export default CardLayout;

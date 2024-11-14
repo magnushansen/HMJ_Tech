@@ -8,17 +8,20 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ rank, suit }) => {
+  const imageName = `${rank}_of_${suit}.png`;
+
+  // Dynamically import the image
+  let imageSrc;
+  try {
+    imageSrc = require(`assets/${imageName}`);
+  } catch (error) {
+    console.error(`Image not found: ${imageName}`, error);
+    return <div className={styles.card}>Card image not found</div>;
+  }
+
   return (
     <div className={styles.card}>
-      <div className={styles.topLeft}>
-        <span>{rank}</span>
-        <span>{suit}</span>
-      </div>
-      <div className={styles.centerSuit}>{suit}</div>
-      <div className={styles.bottomRight}>
-        <span>{rank}</span>
-        <span>{suit}</span>
-      </div>
+      <img src={imageSrc} alt={`${rank} of ${suit}`} className={styles.cardImage} />
     </div>
   );
 };
