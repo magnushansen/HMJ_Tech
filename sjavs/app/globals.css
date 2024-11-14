@@ -3,13 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #0B6623;
   --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+<<<<<<< HEAD
+    --background: #2b521d;
+=======
+    --background: #0B6623;
+>>>>>>> d99756e13ccf65c5c9f881f8b02420b8ff1cbff5
     --foreground: #ededed;
   }
 }
@@ -18,4 +22,58 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 100;
+}
+
+.main-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+}
+
+.menu-options {
+  text-align: center;
+}
+
+.menu-options p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ededed;
+  margin-bottom: 1rem;
+}
+
+.menu-options ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Stacks items vertically */
+  align-items: center; /* Centers items horizontally */
+}
+
+.menu-options ul li {
+  margin: 0.5rem 0;
+}
+
+.menu-options ul li a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #FF8C00; /* Button background color */
+  color: white; /* Button text color */
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif; /* or another bold sans-serif font */
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.menu-options ul li a:hover {
+  background-color: #ffc233; /* Darker shade on hover */
 }
