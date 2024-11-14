@@ -19,10 +19,20 @@ function shuffleDeck() {
     return deck;
 }
 
+// function dealCards(deck) {
+//     const hands = [[], [], [], []];
+//     for (let i = 0; i < 8; i++) {
+//         hands.forEach(hand => hand.push(deck.pop()));
+//     }
+//     return hands;
+// }
+
 function dealCards(deck) {
     const hands = [[], [], [], []];
     for (let i = 0; i < 8; i++) {
-        hands.forEach(hand => hand.push(deck.pop()));
+        for (let j = 0; j < 4; j++) { 
+            hands[j].push(deck.pop());
+        }
     }
     return hands;
 }
