@@ -33,8 +33,41 @@ h1 {
 }
 
 .menu-options {
+  text-align: center;
+}
+
+.menu-options p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.menu-options ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20vh;
+  flex-direction: column; /* Stacks items vertically */
+  align-items: center; /* Centers items horizontally */
+}
+
+.menu-options ul li {
+  margin: 0.5rem 0;
+}
+
+.menu-options ul li a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #FF8C00; /* Button background color */
+  color: white; /* Button text color */
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif; /* or another bold sans-serif font */
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.menu-options ul li a:hover {
+  background-color: #ffc233; /* Darker shade on hover */
 }
