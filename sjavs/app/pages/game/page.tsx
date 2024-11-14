@@ -1,11 +1,13 @@
-import React from 'react'
+import React from 'react';
+import CardLayout from '../../components/CardLayout';
 
-const game = () => {
+const Game = () => {
   return (
     <div>
-      hey
+      <h1>Playing Card Layout</h1>
+      <CardLayout />
     </div>
-  )
-}
+  );
+};
 
-export default game
+export default Game;
