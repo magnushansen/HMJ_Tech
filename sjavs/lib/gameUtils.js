@@ -91,10 +91,9 @@ function chooseTrump(hands) {
 }
 
 function determineTrickWinner(trick, trumpSuit) {
-    // Define the permanent trump hierarchy in the correct order
+
     const permanentTrumpHierarchy = ['Q♣', 'Q♠', 'J♣', 'J♠', 'J♥', 'J♦'];
 
-    // Helper function to check if a card is a permanent trump
     function isPermanentTrump(card) {
         const isTrump = permanentTrumpHierarchy.includes(card);
         console.log(`Checking if ${card} is a permanent trump: ${isTrump}`);
@@ -149,9 +148,7 @@ function determineTrickWinner(trick, trumpSuit) {
 function calculateTrickPoints(trick) {
     const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2 };
     return trick.reduce((total, play) => {
-        // Get the value of the card (e.g., 'A', '10', etc.)
         const cardValue = play.card.slice(0, -1);
-        // Add the points for the card to the total
         return total + (cardPoints[cardValue] || 0);
     }, 0);
 }
