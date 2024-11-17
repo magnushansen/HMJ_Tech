@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.46.1",
     "next": "^15.0.2",
+    "prompt-sync": "^4.2.0",
     "react": "^19.0.0-rc-02c0e824-20241028",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
