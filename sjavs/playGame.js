@@ -40,23 +40,22 @@ function playTrick(hands, gameState, startingPlayerIndex) {
             if (playerHand.includes(card)) {
                 const cardSuit = getCardSuit(card);
 
-                // Rule: If leading suit exists, player must follow it
                 if (
-                    !gameState.leadingSuit || // No leading suit yet
-                    cardSuit === gameState.leadingSuit || // Matches leading suit
-                    !playerHasSuit(playerHand, gameState.leadingSuit) // Player does not have leading suit
+                    !gameState.leadingSuit || 
+                    cardSuit === gameState.leadingSuit || 
+                    !playerHasSuit(playerHand, gameState.leadingSuit) 
                 ) {
-                    // Rule: If player has no leading suit but has trump cards, they must play trump cards
+
                     if (
-                        cardSuit !== gameState.trumpSuit && // Not playing trump suit
-                        !playerHasSuit(playerHand, gameState.leadingSuit) && // No leading suit
-                        playerHasSuit(playerHand, gameState.trumpSuit) // Has trump suit
+                        cardSuit !== gameState.trumpSuit && 
+                        !playerHasSuit(playerHand, gameState.leadingSuit) && 
+                        playerHasSuit(playerHand, gameState.trumpSuit) 
                     ) {
                         console.log(
                             `You must play a trump suit (${gameState.trumpSuit}) card if you don't have the leading suit.`
                         );
                     } else {
-                        validCard = true; // Card is valid
+                        validCard = true; 
                     }
                 } else {
                     console.log(
@@ -68,26 +67,21 @@ function playTrick(hands, gameState, startingPlayerIndex) {
             }
         }
 
-        // Remove the card from the player's hand and add it to the trick
         playerHand.splice(playerHand.indexOf(card), 1);
         gameState.currentTrick.push({ player: playerIndex, card });
 
-        // Set the leading suit if this is the first card played
         if (!gameState.leadingSuit) {
             gameState.leadingSuit = getCardSuit(card);
         }
     }
 
-    // Determine trick winner
     const trickWinner = determineTrickWinner(gameState.currentTrick, gameState.trumpSuit);
     console.log(`Player ${trickWinner + 1} wins the trick!`);
 
-    // Calculate points for the trick
     const trickPoints = calculateTrickPoints(gameState.currentTrick);
     const team = trickWinner % 2 === 0 ? 0 : 1;
     gameState.scores[team] += trickPoints;
 
-    // Debugging: Show all cards played in the trick
     console.log("Cards played in this trick:");
     gameState.currentTrick.forEach((play) => {
         console.log(`Player ${play.player + 1}: ${play.card}`);
@@ -99,7 +93,6 @@ function playTrick(hands, gameState, startingPlayerIndex) {
     return trickWinner;
 }
 
-// Main Game Loop
 let gameEnded = false;
 while (!gameEnded) {
     console.log("\nStarting a new round...\n");
@@ -113,7 +106,6 @@ while (!gameEnded) {
 
     console.log(`Trump suit chosen: ${trumpSuit.trumpSuit}`);
 
-    // Initialize game state
     const gameState = { 
         currentTrick: [], 
         leadingSuit: null, 
@@ -122,13 +114,11 @@ while (!gameEnded) {
     };
     let currentLeader = 0;
 
-    // Play all 8 tricks in the round
     for (let i = 0; i < 8; i++) {
         console.log(`--- Trick ${i + 1} ---`);
         currentLeader = playTrick(hands, gameState, currentLeader);
     }
 
-    // Calculate final scores
     const team1Score = gameState.scores[0];
     const team2Score = gameState.scores[1];
     const [team1FinalScore, team2FinalScore] = calculateFinalScore(team1Score, team2Score, trumpSuit.trumpSuit);
@@ -141,7 +131,6 @@ while (!gameEnded) {
         gameEnded = updateScoreSheet("They", team2FinalScore);
     }
 
-    // Print score sheet
     printScoreSheet();
 }
 
