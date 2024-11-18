@@ -1,34 +1,57 @@
-import supabase from './../../../lib/supabase.js';
+'use client';
 
-async function fetchUsers() {
-    const { data, error } = await supabase
-      .from('user_data') // Replace 'users' with your table name
-      .select('*'); // Fetch all columns
-    
-        if (error) {
-        console.error('Error fetching users:', error);
-        } else {
-        console.log('Users:', data);
-        }
-    }
+import { useState } from 'react';
 
-fetchUsers();
-
-async function signUp(mail, pswd) {
-    const { data, error } = await supabase.auth.signUp({
-        email: mail,
-        password: pswd,
+const Signup = () => {
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
     });
 
-    if (error) {
-        console.error("Error creating user:", error);
-    } else {
-        console.log("User created successfully:", data);
-    }
-}
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-export default function Home() {
-    fetchUsers();
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        // Simple validation
+        if (!formData.username || !formData.email || !formData.password) {
+        setError('All fields are required!');
+        return;
+        }
+
+        if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        setError('Invalid email format!');
+        return;
+        }
+
+        try {
+        const response = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to sign up.');
+        }
+
+            setSuccess('Signup successful!');
+            setFormData({ username: '', email: '', password: '' }); // Clear form
+        } catch (err) {
+            setError('Error signing up. Please try again.');
+        }
+    };
     return (
         <div>
             <h2>Signup</h2>
@@ -41,8 +64,8 @@ export default function Home() {
                     <input 
                     type="text" 
                     name="name" 
-                    //value={formData.name} 
-                    //onChange={hanleChange} 
+                    value={formData.name} 
+                    onChange={handleInputChange} 
                     placeholder="Enter your name">
                     </input>
                 </label>
@@ -56,7 +79,7 @@ export default function Home() {
                     type="email" 
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                     placeholder="Enter your email">
                     </input>
                 </label>
@@ -70,7 +93,7 @@ export default function Home() {
                     type="password"
                     name="password"
                     value={formData.password}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                     placeholder="Enter your password">
                     </input>
                 </label>
@@ -83,3 +106,5 @@ export default function Home() {
         </div>
     );
 }
+
+export default Signup;
