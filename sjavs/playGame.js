@@ -17,7 +17,7 @@ const prompt = promptSync();
 
 function playTrick(hands, gameState, startingPlayerIndex) {
     gameState.currentTrick = [];
-    gameState.leadingSuit = null;
+    gameState.leadingSuit = gameState.trumpSuit;
 
     for (let i = 0; i < 4; i++) {
         const playerIndex = (startingPlayerIndex + i) % 4;
