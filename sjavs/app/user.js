@@ -1,6 +1,6 @@
 const { default: supabase } = require("@/lib/supabase");
 
-async function createUser(mail, pswd) {
+async function signUp(mail, pswd) {
     const { data, error } = await supabase.auth.signUp({
         email: mail,
         password: pswd,
