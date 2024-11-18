@@ -76,10 +76,10 @@ function chooseTrump(hands) {
 
     if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
-        return null; // Signal to re-deal
+        return null; 
     }
 
-    const chosenTrump = trumpCandidates[0].suit; // Assign trump suit
+    const chosenTrump = trumpCandidates[0].suit; 
     console.log(`Player ${trumpCandidates[0].playerIndex + 1} announces the trump suit as ${chosenTrump}`);
     return { trumpSuit: chosenTrump, trumpPlayer: trumpCandidates[0].playerIndex };
 }
@@ -96,7 +96,6 @@ function determineTrickWinner(trick, trumpSuit) {
     console.log("Trick Played:");
     trick.forEach(play => console.log(`Player ${play.player + 1} plays ${play.card}`));
 
-    // Step 1: Check for permanent trump cards
     const permanentTrumpsPlayed = trick.filter(play => isPermanentTrump(play.card));
     if (permanentTrumpsPlayed.length > 0) {
         // Sort permanent trumps based on the permanent trump hierarchy
@@ -105,21 +104,19 @@ function determineTrickWinner(trick, trumpSuit) {
         });
         const highestPermanentTrump = permanentTrumpsPlayed[0];
         console.log("Highest Permanent Trump Played:", highestPermanentTrump.card, "by Player", highestPermanentTrump.player + 1);
-        return highestPermanentTrump.player; // Player who played the highest permanent trump wins
+        return highestPermanentTrump.player; 
     }
 
-    // Step 2: Check for trump suit cards
     const trumpCardsPlayed = trick.filter(play => getCardSuit(play.card) === trumpSuit);
     if (trumpCardsPlayed.length > 0) {
-        // Sort trump cards by rank
+
         trumpCardsPlayed.sort((a, b) => getCardRank(b.card) - getCardRank(a.card));
         const highestTrumpCard = trumpCardsPlayed[0];
         console.log("Highest Trump Card Played:", highestTrumpCard.card, "by Player", highestTrumpCard.player + 1);
-        return highestTrumpCard.player; // Player who played the highest trump wins
+        return highestTrumpCard.player; 
     }
 
-    // Step 3: Fallback to leading suit
-    const leadingSuit = getCardSuit(trick[0].card); // First card determines the leading suit
+    const leadingSuit = getCardSuit(trick[0].card); 
     let winningCard = trick[0].card;
     let winningPlayer = trick[0].player;
 
@@ -127,7 +124,6 @@ function determineTrickWinner(trick, trumpSuit) {
         const { player, card } = play;
         const cardSuit = getCardSuit(card);
 
-        // Compare cards in the leading suit
         if (cardSuit === leadingSuit && getCardRank(card) > getCardRank(winningCard)) {
             winningCard = card;
             winningPlayer = player;
