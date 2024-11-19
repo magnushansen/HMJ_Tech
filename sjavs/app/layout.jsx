@@ -29,7 +29,7 @@ function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body class="bg-green-800 m-0 p-0 h-screen">
+        <body className="bg-green-800 m-0 p-0 h-screen">
           <SignedOut>
             <SignInButton mode="modal"/>
           </SignedOut>
