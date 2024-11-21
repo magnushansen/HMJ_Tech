@@ -4,11 +4,9 @@ import { printScoreSheet, updateScore, checkForRubberWin } from './scoreSheet.js
 
 let doubleNextGameScore = false; // Keeps track if the next game's score should be doubled
 
-// Function to update the score sheet based on the winning team and points scored nnlænlænm niunuuih hjjj
 export function updateScoreSheet(winningTeam, points) {
     updateScore(winningTeam, points); // Update score using scoreSheet.js
 
-    // Check if a team has won the rubber
     const gameEnded = checkForRubberWin(winningTeam);
     if (gameEnded) {
         printScoreSheet();
@@ -16,9 +14,8 @@ export function updateScoreSheet(winningTeam, points) {
     return gameEnded;
 }
 
-// Function to calculate the final score based on the rules
 export function calculateFinalScore(team1Points, team2Points, trumpSuit) {
-    const CLUB_TRUMP_MULTIPLIER = trumpSuit === '♣' ? 2 : 1;
+    const CLUB_TRUMP_MULTIPLIER = trumpSuit === 'CLUBS' ? 2 : 1;
     const scoreMultiplier = doubleNextGameScore ? 2 : 1; // Double score if the last game was a tie
 
     if (team1Points === 120) {
