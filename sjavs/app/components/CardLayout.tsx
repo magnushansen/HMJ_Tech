@@ -46,7 +46,7 @@ const CardLayout: React.FC = () => {
             <Card
               key={card}
               rank={card.split(" ")[0]}
-              suit={card.split(" ")[1]}
+              suit={card.split(" ")[1]} 
             />
           ))}
         </div>

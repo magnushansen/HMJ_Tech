@@ -1,35 +1,38 @@
 .hand {
   position: absolute;
   display: flex;
-  flex-wrap: wrap; /* Allow cards to wrap if needed */
-  gap: 10px; /* Spacing between cards */
+  justify-content: center;
+  gap: 10px; /* Space between cards */
 }
 
-/* Example for each player */
+/* Player 1: Bottom Center */
 .player1 {
-  bottom: 5%; /* Adjust spacing */
+  bottom: 5%; /* Adjust from 5% to ensure no clipping */
   left: 50%;
   transform: translateX(-50%);
-  flex-direction: row; /* Horizontal layout */
+  flex-direction: row;
 }
 
+/* Player 2: Right Center */
 .player2 {
   top: 50%;
-  right: 5%;
+  right: 5%; /* Adjust as needed */
   transform: translateY(-50%);
-  flex-direction: column; /* Vertical layout */
+  flex-direction: column;
 }
 
+/* Player 3: Top Center */
 .player3 {
-  top: 5%;
+  top: 5%; /* Adjust from 5% to avoid clipping */
   left: 50%;
   transform: translateX(-50%);
-  flex-direction: row; /* Horizontal layout */
+  flex-direction: row;
 }
 
+/* Player 4: Left Center */
 .player4 {
   top: 50%;
-  left: 5%;
+  left: 5%; /* Adjust as needed */
   transform: translateY(-50%);
-  flex-direction: column; /* Vertical layout */
+  flex-direction: column;
 }
