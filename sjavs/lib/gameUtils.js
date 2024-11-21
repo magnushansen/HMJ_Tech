@@ -72,8 +72,17 @@ function chooseTrump(hands) {
         trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
     });
 
-    trumpCandidates.sort((a, b) => b.count - a.count);
+    trumpCandidates.sort((a, b) => b.count - a.count || suits.indexOf(a.suit) - suits.indexOf(b.suit));
 
+    // Ensure clubs are prioritized in case of a tie
+    trumpCandidates.sort((a, b) => {
+        if (b.count === a.count) {
+            if (a.suit === 'CLUBS') return -1;
+            if (b.suit === 'CLUBS') return 1;
+        }
+        return 0;
+    });
+    console.log('The trump candidates are:', trumpCandidates);
     if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
         return null; 

@@ -66,7 +66,8 @@ function playTrick(hands, gameState, startingPlayerIndex) {
                 console.log("Invalid card. Please choose a card from your hand.");
             }
         }
-
+//um einki leading suit ella card suit er game state leading suit ella spælari ikki hevur elading suit. 
+//um card suit ikki er game state suit og spælari ikki hevur leading suit og spælari hevur trump suit
         playerHand.splice(playerHand.indexOf(card), 1);
         gameState.currentTrick.push({ player: playerIndex, card });
 
