@@ -1,9 +1,35 @@
-/* components/CardLayout.module.css */
-.layout {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 10px;
-    padding: 10px;
-    /* justify-content: center; */
-  }
-  
+.hand {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap if needed */
+  gap: 10px; /* Spacing between cards */
+}
+
+/* Example for each player */
+.player1 {
+  bottom: 5%; /* Adjust spacing */
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row; /* Horizontal layout */
+}
+
+.player2 {
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  flex-direction: column; /* Vertical layout */
+}
+
+.player3 {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row; /* Horizontal layout */
+}
+
+.player4 {
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  flex-direction: column; /* Vertical layout */
+}
