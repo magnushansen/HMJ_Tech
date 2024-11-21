@@ -4,7 +4,7 @@ import { printScoreSheet, updateScore, checkForRubberWin } from './scoreSheet.js
 
 let doubleNextGameScore = false; // Keeps track if the next game's score should be doubled
 
-// Function to update the score sheet based on the winning team and points scored
+// Function to update the score sheet based on the winning team and points scored nnlænlænm
 export function updateScoreSheet(winningTeam, points) {
     updateScore(winningTeam, points); // Update score using scoreSheet.js
 
