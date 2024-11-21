@@ -8,3 +8,6 @@ function generateRandomId(length) {
     return randomId;
 }
 
+function createLobby() {
+    
+}
