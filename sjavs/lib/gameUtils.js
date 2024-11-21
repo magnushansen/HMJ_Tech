@@ -1,6 +1,6 @@
 function shuffleDeck() {
     const suits = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'];
-    const values = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const values = ['7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
     const deck = [];
 
     for (const suit of suits) {
@@ -75,10 +75,9 @@ function chooseTrump(hands) {
         trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
     });
 
-    // Sort by count suit count and then prioritize trump suits
     trumpCandidates.sort((a, b) => b.count - a.count || suits.indexOf(a.suit) - suits.indexOf(b.suit));
 
-    // Ensure clubs are prioritized in case of a tie of suit counts
+    // Ensure clubs are prioritized in case of a tie
     trumpCandidates.sort((a, b) => {
         if (b.count === a.count) {
             if (a.suit === 'CLUBS') return -1;
@@ -89,10 +88,10 @@ function chooseTrump(hands) {
     console.log('The trump candidates are:', trumpCandidates);
     if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
-        return null; 
+        return null;
     }
 
-    const chosenTrump = trumpCandidates[0].suit; 
+    const chosenTrump = trumpCandidates[0].suit;
     console.log(`Player ${trumpCandidates[0].playerIndex + 1} announces the trump suit as ${chosenTrump}`);
     return { trumpSuit: chosenTrump, trumpPlayer: trumpCandidates[0].playerIndex };
 }
@@ -119,7 +118,7 @@ function determineTrickWinner(trick, trumpSuit) {
         });
         const highestPermanentTrump = permanentTrumpsPlayed[0];
         console.log("Highest Permanent Trump Played:", highestPermanentTrump.card, "by Player", highestPermanentTrump.player + 1);
-        return highestPermanentTrump.player; 
+        return highestPermanentTrump.player;
     }
 
     // Check if trump cards were played
@@ -130,11 +129,10 @@ function determineTrickWinner(trick, trumpSuit) {
         trumpCardsPlayed.sort((a, b) => getCardRank(b.card) - getCardRank(a.card));
         const highestTrumpCard = trumpCardsPlayed[0];
         console.log("Highest Trump Card Played:", highestTrumpCard.card, "by Player", highestTrumpCard.player + 1);
-        return highestTrumpCard.player; 
+        return highestTrumpCard.player;
     }
 
-    // Initialize first card as winning card, player and suit
-    const leadingSuit = getCardSuit(trick[0].card); 
+    const leadingSuit = getCardSuit(trick[0].card);
     let winningCard = trick[0].card;
     let winningPlayer = trick[0].player;
 
@@ -158,11 +156,10 @@ function determineTrickWinner(trick, trumpSuit) {
 
 function calculateTrickPoints(trick) {
     const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
-    
-    // Extract card value and and its corresponding points to total
+
     return trick.reduce((total, play) => {
-        const cardValue = play.card.split(' ')[0]; 
-        return total + (cardPoints[cardValue] || 0); 
+        const cardValue = play.card.split(' ')[0];
+        return total + (cardPoints[cardValue] || 0);
     }, 0);
 }
 
