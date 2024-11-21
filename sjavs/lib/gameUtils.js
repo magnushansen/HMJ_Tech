@@ -51,9 +51,11 @@ function chooseTrump(hands) {
     const suits = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'];
     const trumpCandidates = [];
 
+    // Initialize count for each suit in the hand
     hands.forEach((hand, playerIndex) => {
         const suitCounts = { 'SPADES': 0, 'HEARTS': 0, 'DIAMONDS': 0, 'CLUBS': 0 };
 
+        // Increment count for each suit in the hand
         hand.forEach(card => {
             const suit = getCardSuit(card);
             suitCounts[suit]++;
@@ -62,6 +64,7 @@ function chooseTrump(hands) {
         let longestSuit = null;
         let maxCount = 0;
 
+        // Find the highest suit count
         for (const suit of suits) {
             if (suitCounts[suit] > maxCount) {
                 longestSuit = suit;
@@ -72,9 +75,10 @@ function chooseTrump(hands) {
         trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
     });
 
+    // Sort by count suit count and then prioritize trump suits
     trumpCandidates.sort((a, b) => b.count - a.count || suits.indexOf(a.suit) - suits.indexOf(b.suit));
 
-    // Ensure clubs are prioritized in case of a tie
+    // Ensure clubs are prioritized in case of a tie of suit counts
     trumpCandidates.sort((a, b) => {
         if (b.count === a.count) {
             if (a.suit === 'CLUBS') return -1;
@@ -96,6 +100,7 @@ function chooseTrump(hands) {
 function determineTrickWinner(trick, trumpSuit) {
     const permanentTrumpHierarchy = ['Q CLUBS', 'Q SPADES', 'J CLUBS', 'J SPADES', 'J HEARTS', 'J DIAMONDS'];
 
+    // Is the card a trump suit
     function isPermanentTrump(card) {
         return permanentTrumpHierarchy.includes(card);
     }
@@ -105,9 +110,10 @@ function determineTrickWinner(trick, trumpSuit) {
     console.log("Trick Played:");
     trick.forEach(play => console.log(`Player ${play.player + 1} plays ${play.card}`));
 
+    // Check if permanent trump cards were played
     const permanentTrumpsPlayed = trick.filter(play => isPermanentTrump(play.card));
     if (permanentTrumpsPlayed.length > 0) {
-        // Sort permanent trumps based on the permanent trump hierarchy
+        // Sort permanent trumps based on the permanent trump hierarchy listed before
         permanentTrumpsPlayed.sort((a, b) => {
             return permanentTrumpHierarchy.indexOf(a.card) - permanentTrumpHierarchy.indexOf(b.card);
         });
@@ -116,15 +122,18 @@ function determineTrickWinner(trick, trumpSuit) {
         return highestPermanentTrump.player; 
     }
 
+    // Check if trump cards were played
     const trumpCardsPlayed = trick.filter(play => getCardSuit(play.card) === trumpSuit);
     if (trumpCardsPlayed.length > 0) {
 
+        // Sort trump cards based on their rank
         trumpCardsPlayed.sort((a, b) => getCardRank(b.card) - getCardRank(a.card));
         const highestTrumpCard = trumpCardsPlayed[0];
         console.log("Highest Trump Card Played:", highestTrumpCard.card, "by Player", highestTrumpCard.player + 1);
         return highestTrumpCard.player; 
     }
 
+    // Initialize first card as winning card, player and suit
     const leadingSuit = getCardSuit(trick[0].card); 
     let winningCard = trick[0].card;
     let winningPlayer = trick[0].player;
@@ -133,6 +142,8 @@ function determineTrickWinner(trick, trumpSuit) {
         const { player, card } = play;
         const cardSuit = getCardSuit(card);
 
+        // If the card is trump suit and higher rank than the current winning card
+        // then update the winning card and player
         if (cardSuit === leadingSuit && getCardRank(card) > getCardRank(winningCard)) {
             winningCard = card;
             winningPlayer = player;
@@ -148,6 +159,7 @@ function determineTrickWinner(trick, trumpSuit) {
 function calculateTrickPoints(trick) {
     const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
     
+    // Extract card value and and its corresponding points to total
     return trick.reduce((total, play) => {
         const cardValue = play.card.split(' ')[0]; 
         return total + (cardPoints[cardValue] || 0); 
