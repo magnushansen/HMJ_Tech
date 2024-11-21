@@ -59,9 +59,9 @@ function playTrick(hands, gameState, startingPlayerIndex) {
         playerHand.splice(playerHand.indexOf(card), 1);
         gameState.currentTrick.push({ player: playerIndex, card });
 
-        if (!gameState.trumpSuit) {
-            gameState.trumpSuit = getCardSuit(card);
-        }
+        // if (!gameState.trumpSuit) {
+        //     gameState.trumpSuit = getCardSuit(card);
+        // }
     }
 
     const trickWinner = determineTrickWinner(gameState.currentTrick, gameState.trumpSuit);
@@ -97,7 +97,7 @@ while (!gameEnded) {
 
     const gameState = { 
         currentTrick: [], 
-        trumpSuit: trumpSuit.trumpSuit, // Ensure trump suit is fixed throughout the game
+        trumpSuit: trumpSuit.trumpSuit, 
         scores: [0, 0] 
     };
     let currentLeader = 0;

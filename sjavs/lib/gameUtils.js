@@ -85,7 +85,6 @@ function chooseTrump(hands) {
         }
         return 0;
     });
-    console.log('The trump candidates are:', trumpCandidates);
     if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
         return null;
