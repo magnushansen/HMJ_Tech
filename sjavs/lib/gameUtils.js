@@ -1,6 +1,6 @@
 function shuffleDeck() {
     const suits = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'];
-    const values = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const values = ['7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
     const deck = [];
 
     for (const suit of suits) {
