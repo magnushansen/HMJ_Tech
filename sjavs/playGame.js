@@ -17,7 +17,6 @@ const prompt = promptSync();
 
 function playTrick(hands, gameState, startingPlayerIndex) {
     gameState.currentTrick = [];
-    gameState.leadingSuit = gameState.trumpSuit;
 
     for (let i = 0; i < 4; i++) {
         const playerIndex = (startingPlayerIndex + i) % 4;
@@ -39,40 +38,29 @@ function playTrick(hands, gameState, startingPlayerIndex) {
 
             if (playerHand.includes(card)) {
                 const cardSuit = getCardSuit(card);
-
+            
+                // If card suit is not trump suit and player has trump suit, they must play trump suit
                 if (
-                    !gameState.leadingSuit || 
-                    cardSuit === gameState.leadingSuit || 
-                    !playerHasSuit(playerHand, gameState.leadingSuit) 
+                    playerHasSuit(playerHand, gameState.trumpSuit) &&
+                    cardSuit !== gameState.trumpSuit
                 ) {
-
-                    if (
-                        cardSuit !== gameState.trumpSuit && 
-                        !playerHasSuit(playerHand, gameState.leadingSuit) && 
-                        playerHasSuit(playerHand, gameState.trumpSuit) 
-                    ) {
-                        console.log(
-                            `You must play a trump suit (${gameState.trumpSuit}) card if you don't have the leading suit.`
-                        );
-                    } else {
-                        validCard = true; 
-                    }
-                } else {
+                    validCard = false;
                     console.log(
-                        `You must play a card of the leading suit (${gameState.leadingSuit}) if you have one.`
+                        `You must play a card of the trump suit (${gameState.trumpSuit}) if you have one.`
                     );
+                } else {
+                    validCard = true;
                 }
             } else {
                 console.log("Invalid card. Please choose a card from your hand.");
             }
         }
-//um einki leading suit ella card suit er game state leading suit ella spælari ikki hevur elading suit. 
-//um card suit ikki er game state suit og spælari ikki hevur leading suit og spælari hevur trump suit
+
         playerHand.splice(playerHand.indexOf(card), 1);
         gameState.currentTrick.push({ player: playerIndex, card });
 
-        if (!gameState.leadingSuit) {
-            gameState.leadingSuit = getCardSuit(card);
+        if (!gameState.trumpSuit) {
+            gameState.trumpSuit = getCardSuit(card);
         }
     }
 
@@ -109,7 +97,6 @@ while (!gameEnded) {
 
     const gameState = { 
         currentTrick: [], 
-        leadingSuit: null, 
         trumpSuit: trumpSuit.trumpSuit, // Ensure trump suit is fixed throughout the game
         scores: [0, 0] 
     };
