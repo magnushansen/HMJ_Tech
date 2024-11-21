@@ -4,8 +4,8 @@ import React from 'react';
 import Card from './Cards';
 import styles from './CardLayout.module.css';
 
-const suits = ['spades', 'hearts', 'diamonds', 'spades'];
-const ranks = ['ace', '7', '8', '9', '10', 'jack', 'queen', 'king'];
+const suits = ['spades', 'clubs', 'diamonds', 'hearts'];
+const ranks = [ '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
 const imageName = `${ranks}_of_${suits}.png`;
 
 const CardLayout: React.FC = () => {
