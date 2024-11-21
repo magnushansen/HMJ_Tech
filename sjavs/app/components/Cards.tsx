@@ -1,7 +1,7 @@
-"use client"; // This directive makes this a client component
+"use client";
 
-import React from 'react';
-import styles from './Card.module.css';
+import React, { useState } from "react";
+import styles from "./CardAnimation.module.css";
 
 interface CardProps {
   rank: string;
@@ -9,16 +9,25 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ rank, suit }) => {
+  const [isCentered, setIsCentered] = useState(false);
+
   const imageName = `${rank}_of_${suit}.png`;
-  const imageSrc = `/assets/${imageName}`; // Use direct path to public assets
+  const imageSrc = `/assets/${imageName}`;
+
+  const handleCardClick = () => {
+    setIsCentered(!isCentered);
+  };
 
   return (
-    <div className={styles.card}>
+    <div
+      className={`${styles.card} ${isCentered ? styles.centered : ""}`}
+      onClick={handleCardClick}
+    >
       <img
         src={imageSrc}
         alt={`${rank} of ${suit}`}
         className={styles.cardImage}
-        onError={(e) => (e.currentTarget.style.display = 'none')} // Hide if image not found
+        onError={(e) => (e.currentTarget.style.display = "none")}
       />
     </div>
   );

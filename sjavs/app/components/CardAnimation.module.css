@@ -1,0 +1,32 @@
+.card {
+    position: relative;
+    width: 100px; /* Adjust size as necessary */
+    height: 150px; /* Adjust size as necessary */
+    transition: all 0.0s ease-in-out; /* Smooth transition */
+    transform-origin: center center;
+  }
+  
+  .card img {
+    width: 75%;
+    height: 75%;
+    object-fit: cover;
+  }
+  
+  .card.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-25%, -25%) scale(1); /* Move and enlarge the card */
+    z-index: 10; /* Ensure the centered card is on top */
+  }
+  
+  .card.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .card.hover:hover {
+    transform: scale(1.5); /* Slightly enlarge on hover */
+    transition: transform 0.3s ease-in-out;
+  }
+  
