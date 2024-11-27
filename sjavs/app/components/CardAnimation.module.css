@@ -16,9 +16,10 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-25%, -25%) scale(1); /* Move and enlarge the card */
-    z-index: 10; /* Ensure the centered card is on top */
+    transform: translate(-50%, -50%) scale(1.5); /* Move and enlarge */
+    z-index: 10; /* Bring to the top */
   }
+  
   
   .card.hidden {
     opacity: 0;
