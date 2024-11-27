@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Card from "./Cards";
+import TurnManager from "./TurnManager";
 import styles from "./CardLayout.module.css";
 import { shuffleDeck, dealCards, chooseTrump } from "../../lib/gameUtils";
 
@@ -24,7 +25,7 @@ const CardLayout: React.FC = () => {
     }
   };
 
-  const handleCardClick = (card: string, playerIndex: number) => {
+  const handleCardClick = (card: string, playerIndex: number, nextTurn: () => void) => {
     // Remove the clicked card from the player's hand
     const updatedHands = hands.map((hand, index) =>
       index === playerIndex ? hand.filter((c) => c !== card) : hand
@@ -33,6 +34,9 @@ const CardLayout: React.FC = () => {
 
     // Set the clicked card as the centered card
     setCenteredCard(card);
+
+    // Move to the next turn
+    nextTurn();
   };
 
   const handleRemoveCenteredCard = () => {
@@ -40,43 +44,49 @@ const CardLayout: React.FC = () => {
   };
 
   return (
-    <div className={styles.gameContainer}>
-      <button onClick={startGame} className={styles.startButton}>
-        Start Game
-      </button>
-      {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
+    <TurnManager players={hands.length}>
+      {({ currentTurn, nextTurn }) => (
+        <div className={styles.gameContainer}>
+          <button onClick={startGame} className={styles.startButton}>
+            Start Game
+          </button>
+          {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
+          <p className={styles.currentTurn}>Player Turn: {currentTurn + 1}</p> {/* Display current turn */}
 
-      {/* Global container for centered card */}
-      {centeredCard && (
-        <div className={styles.centeredContainer} onClick={handleRemoveCenteredCard}>
-          <Card
-            key={centeredCard}
-            rank={centeredCard.split(" ")[0]}
-            suit={centeredCard.split(" ")[1]}
-            isCentered={true}
-            onClick={handleRemoveCenteredCard} // Remove centered card on click
-          />
-        </div>
-      )}
+          {/* Global container for centered card */}
+          {centeredCard && (
+            <div className={styles.centeredContainer} onClick={handleRemoveCenteredCard}>
+              <Card
+                key={centeredCard}
+                rank={centeredCard.split(" ")[0]}
+                suit={centeredCard.split(" ")[1]}
+                isCentered={true}
+                onClick={handleRemoveCenteredCard} // Remove centered card on click
+                isClickable={false}              />
+            </div>
+          )}
 
-      {/* Player hands */}
-      {hands.map((hand, playerIndex) => (
-        <div
-          key={playerIndex}
-          className={`${styles.hand} ${styles[`player${playerIndex + 1}`]}`}
-        >
-          {hand.map((card) => (
-            <Card
-              key={card}
-              rank={card.split(" ")[0]}
-              suit={card.split(" ")[1]}
-              isCentered={false}
-              onClick={() => handleCardClick(card, playerIndex)} // Pass player index and card
-            />
+          {/* Player hands */}
+          {hands.map((hand, playerIndex) => (
+            <div
+              key={playerIndex}
+              className={`${styles.hand} ${styles[`player${playerIndex + 1}`]}`}
+            >
+              {hand.map((card) => (
+                <Card
+                  key={card}
+                  rank={card.split(" ")[0]}
+                  suit={card.split(" ")[1]}
+                  isCentered={false}
+                  onClick={() => handleCardClick(card, playerIndex, nextTurn)} // Pass player index and turn logic
+                  isClickable={playerIndex === currentTurn} // Disable clicking for other players
+                />
+              ))}
+            </div>
           ))}
         </div>
-      ))}
-    </div>
+      )}
+    </TurnManager>
   );
 };
 
