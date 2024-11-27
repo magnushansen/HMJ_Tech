@@ -13,13 +13,13 @@ export default function CreateLobby() {
     const router = useRouter(); // Router for navigation
 
     // Function to create a lobby
-    const createLobby = async (isPrivate) => {
+    const createLobby = async () => {
         try {
             // Insert a new session (lobby) into the database
             const { data, error } = await supabase
                 .from("session")
                 .insert({
-                    public: !isPrivate, // Indicates whether the session is public or private
+                    public: true, // Default to public since there's no distinction now
                     active: true, // Marks the session as active
                     count: 0, // Initial player count
                 })
@@ -45,28 +45,35 @@ export default function CreateLobby() {
             </div>
 
             <div className="flex flex-col items-center justify-start h-[calc(100vh-100px)] mt-[-10px]">
-                <h2 className="text-4xl font-bold mb-4">Create Lobby</h2>
+                <h2 className="text-4xl font-bold mb-4">Lobby Menu</h2>
 
                 <ul className="space-y-4 flex flex-col items-center">
+                    {/* Create Lobby Button */}
                     <li>
                         <button
-                            onClick={() => createLobby(false)} // Create a public lobby
+                            onClick={createLobby} // Create a lobby
                             className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
                         >
-                            Create Public Lobby
+                            Create Lobby
                         </button>
                     </li>
+                    
+                    {/* Join Lobby Button */}
                     <li>
                         <button
-                            onClick={() => createLobby(true)} // Create a private lobby
+                            onClick={() => router.push("/joinlobby")} // Redirect to Join Lobby page
                             className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
                         >
-                            Create Private Lobby
+                            Join Lobby
                         </button>
                     </li>
+
+                    {/* Error Message */}
                     {error && (
                         <p className="text-red-500 mt-4">{error}</p>
                     )}
+                    
+                    {/* Main Menu Button */}
                     <li>
                         <button
                             onClick={() => router.push("/")} // Navigate back to the main menu
