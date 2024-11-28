@@ -31,10 +31,20 @@ export default function JoinLobby() {
             if (data.player_count >= 4) {
                 alert("Lobby is full.");
                 return;
-            } else {
-                // Redirect to the lobby page
-                router.push(`/createlobby/${lobbyId}`);
+            } 
+            
+            // Update the player count in the lobby
+            const { error: updateError } = await supabase
+                .from("session")
+                .update({ player_count: data.player_count + 1 })
+                .eq("id", lobbyId);
+
+            if (updateError) {
+                throw new Error("Failed to join the lobby. Please try again.");
             }
+            // Redirect to the lobby page
+            router.push(`/createlobby/${lobbyId}`);
+
         } catch (err) {
             setError(err.message || "Failed to join lobby. Please try again.");
             console.error(err);
