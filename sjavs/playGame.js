@@ -8,6 +8,8 @@ import {
     calculateTrickPoints,
     chooseTrump
 } from './lib/gameUtils.js';
+//uihasduhiadshuiadsuhdsdsaadsdasdadddsdssasaadsasd
+//uisuhidsadsdsdsdsdddddsdsffdsdfsdsfdsdsf
 
 import { updateScoreSheet, calculateFinalScore, resetDoubleNextGameScore } from './lib/scoring.js';
 import { printScoreSheet } from './lib/scoreSheet.js';
