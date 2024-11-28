@@ -1,4 +1,5 @@
 'use client'
+
 import { useRouter } from "next/navigation"; // For programmatic navigation
 import { createClient } from "@supabase/supabase-js";
 import React, { useState } from "react";

@@ -1,7 +1,10 @@
 'use client';
 
+import { useRouter } from "next/navigation"; // For programmatic navigation
+
 export default function LobbyPage({ params }) {
     const { lobbyId } = params; // Get lobbyId from the URL
+    const router = useRouter();
 
     return (
         <div className="h-screen bg-green-800 text-white font-sans">
@@ -12,9 +15,7 @@ export default function LobbyPage({ params }) {
                 <p className="text-lg mb-6">Share this lobby ID with your friends to join the game!</p>
                 <button
                     className="block w-48 bg-red-500 hover:bg-red-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
-                    onClick={() => {
-                        alert('Leave Lobby functionality goes here');
-                    }}
+                    onClick={() => router.push("/")}
                 >
                     Leave Lobby
                 </button>

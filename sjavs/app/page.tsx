@@ -1,96 +1,44 @@
-'use client'
-
-import Link from 'next/link';
-import { useEffect, useState } from 'react'
-import { useSession, useUser } from '@clerk/nextjs'
-import { createClient } from '@supabase/supabase-js'
-import React from 'react';
-import { headers } from 'next/headers';
+import Link from "next/link";
+import React from "react";
 
 export default function Menu() {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [name, setName] = useState('');
-  // The `useUser()` hook will be used to ensure that Clerk has loaded data about the logged in user
-  const { user } = useUser();
-  // The `useSession()` hook will be used to get the Clerk session object
-  const { session } = useSession();
-
-  // Create a custom supabase client that injects the Clerk Supabase token into the request headers
-  function createClerkSupabaseClient() {
-    return createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          // Get the custom Supabase token from Clerk
-          fetch: async (url, options = {}) => {
-            const clerkToken = await session?.getToken({
-              template: 'supabase',
-            })
-
-            // Insert the Clerk Supabase token into the headers
-            const headers = new Headers((options as RequestInit)?.headers);
-            headers.set('Authorization', `Bearer ${clerkToken}`);
-
-            // Now call the default fetch
-            return fetch(url, {
-              ...options,
-              headers
-            })
-          }
-        }
-      }
-    )
-  }
-  // Create a `client` object for accessing Supabase data using the Clerk token
-  const client = createClerkSupabaseClient();
-
-  // This `useEffect` will wait for the User object to be loaded before requesting
-  // the tasks for the logged in user
-  useEffect(() => {
-    if (!user) return
-
-    async function loadTasks() {
-      setLoading(true);
-      const { data, error } = await client.from('tasks').select()
-      if (!error) setTasks(data)
-      setLoading(false)
-    }
-
-    loadTasks()
-  }, [user])
-
-  async function createTask(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    // Insert tasks into the 'tasks' table in database
-    await client.from('tasks').insert({
-      name,
-    })
-    window.location.reload
-  }
-
     return (
-      <div>
-        <h1>Tasks</h1>
+    <div className="h-screen bg-green-800 text-white font-sans">
 
-        {loading && <p>Loading...</p>}
+    <div className="w-full text-center py-6">
+        <h1 className="text-5xl font-extrabold">Sjavs</h1>
+    </div>
 
-        {!loading && tasks.length > 0 && tasks.map((task: any) => <p key={task.id}>{task.name}</p>)}
+    <div className="flex flex-col items-center justify-start h-[calc(100vh-100px)] mt-[-10px]">
+        <h2 className="text-4xl font-bold mb-4">Main Menu</h2>
 
-        {!loading && tasks.length === 0 && <p>No tasks found</p>}
-
-        <form onSubmit={createTask}>
-          <input 
-          autoFocus
-          type="text"
-          name='name'
-          placeholder='Enter new task'
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          />
-          <button type='submit'>Add</button>
-        </form>
-      </div>
-    );
+        <ul className="space-y-4 flex flex-col items-center">
+        <li>
+            <Link
+            href="/joinlobby"
+            className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
+            >
+            Join Lobby
+            </Link>
+        </li>
+        <li>
+            <Link
+            href="/createlobby"
+            className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
+            >
+            Create Lobby
+            </Link>
+        </li>
+        <li>
+            <Link
+            href="/tournament"
+            className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
+            >
+            Tournament
+            </Link>
+        </li>
+        </ul>
+    </div>
+    </div>
+    )
 }
