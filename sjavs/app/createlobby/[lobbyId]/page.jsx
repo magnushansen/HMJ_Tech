@@ -3,15 +3,12 @@ import { useRouter } from "next/navigation"; // For programmatic navigation
 
 import { useParams } from 'next/navigation';
 
-import { useRouter } from "next/navigation"; // For programmatic navigation
-
 export default function LobbyPage() {
     const router = useRouter(); // Router for navigation
 
     // Use React's useParams hook to get dynamic route parameters
     const params = useParams();
     const { lobbyId } = params; // Get lobbyId from the URL
-    const router = useRouter();
 
     return (
         <div className="h-screen bg-green-800 text-white font-sans">
@@ -26,11 +23,6 @@ export default function LobbyPage() {
                     >
                         Main Menu
                     </button>
-                    className="block w-48 bg-red-500 hover:bg-red-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
-                    onClick={() => router.push("/")}
-                >
-                    Leave Lobby
-                </button>
             </div>
         </div>
     );
