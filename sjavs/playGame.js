@@ -9,7 +9,7 @@ import {
     chooseTrump
 } from './lib/gameUtils.js';
 //uihasduhiadshuiadsuh
-//uisuhiuhis
+//uisuhi
 
 import { updateScoreSheet, calculateFinalScore, resetDoubleNextGameScore } from './lib/scoring.js';
 import { printScoreSheet } from './lib/scoreSheet.js';
