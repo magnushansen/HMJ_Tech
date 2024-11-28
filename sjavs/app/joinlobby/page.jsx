@@ -19,7 +19,7 @@ export default function JoinLobby() {
             // Check if the lobby exists and is active
             const { data, error } = await supabase
                 .from("session")
-                .select("*")
+                .select("id, active, player_count")
                 .eq("id", lobbyId)
                 .eq("active", true)
                 .single(); // Ensures we only get one lobby
@@ -28,8 +28,13 @@ export default function JoinLobby() {
                 throw new Error("Lobby not found or is inactive.");
             }
 
-            // Redirect to the lobby page
-            router.push(`/createlobby/${lobbyId}`);
+            if (data.player_count >= 4) {
+                alert("Lobby is full.");
+                return;
+            } else {
+                // Redirect to the lobby page
+                router.push(`/createlobby/${lobbyId}`);
+            }
         } catch (err) {
             setError(err.message || "Failed to join lobby. Please try again.");
             console.error(err);
