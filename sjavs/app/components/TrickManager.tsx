@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { getCardSuit, playerHasSuit } from "../../lib/gameUtils";
 
@@ -13,24 +15,6 @@ interface TrickManagerProps {
     playCard: (card: string, playerIndex: number) => void;
   }) => React.ReactNode;
 }
-
-const permanentTrumpHierarchy = [
-  "Q CLUBS",
-  "Q SPADES",
-  "J CLUBS",
-  "J SPADES",
-  "J HEARTS",
-  "J DIAMONDS",
-];
-
-/**
- * Determines if a card is a permanent trump.
- * @param card - The card being checked
- * @returns {boolean} - True if the card is a permanent trump
- */
-const isPermanentTrump = (card: string): boolean => {
-  return permanentTrumpHierarchy.includes(card);
-};
 
 const TrickManager: React.FC<TrickManagerProps> = ({
   players,
@@ -48,38 +32,19 @@ const TrickManager: React.FC<TrickManagerProps> = ({
    * @param playerIndex - The index of the player attempting to play the card
    * @returns {boolean} - Whether the card can be played
    */
-  const validatePlay = (
-    card: string,
-    playerIndex: number
-  ): boolean => {
+  const validatePlay = (card: string, playerIndex: number): boolean => {
     const cardSuit = getCardSuit(card);
 
     console.log(`Player ${playerIndex + 1} attempting to play ${card}`);
     console.log(`Leading Suit: ${leadingSuit}, Trump Suit: ${trumpSuit}`);
-    console.log(
-      `Player has leading suit: ${playerHasSuit(hands[playerIndex], leadingSuit)}`
-    );
-    console.log(
-      `Player has trump suit: ${playerHasSuit(hands[playerIndex], trumpSuit)}`
-    );
+    console.log(`Player has leading suit: ${playerHasSuit(hands[playerIndex], leadingSuit)}`);
+    console.log(`Player has trump suit: ${trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false}`);
 
     // If no leading suit, it's the first card of the trick
     if (!leadingSuit) {
-      const hasTrumpSuit = trumpSuit
-        ? playerHasSuit(hands[playerIndex], trumpSuit)
-        : false;
-
-      if (hasTrumpSuit) {
-        // Player must play a trump suit card if available
-        const isValid = cardSuit === trumpSuit || isPermanentTrump(card);
-        console.log(
-          `Validation Result: ${isValid} (player must play trump suit if available)`
-        );
-        return isValid;
-      }
-
-      console.log(`Validation Result: true (no leading suit and no trump cards)`);
-      return true; // Free play if no trump cards
+      setLeadingSuit(cardSuit); // Set leading suit for the new trick
+      console.log(`Validation Result: true (no leading suit yet)`);
+      return true; // Any card is valid for the first play
     }
 
     // Check if the player has cards of the leading suit
@@ -93,23 +58,17 @@ const TrickManager: React.FC<TrickManagerProps> = ({
     }
 
     // If the player does not have the leading suit:
-    const hasTrumpSuit = trumpSuit
-      ? playerHasSuit(hands[playerIndex], trumpSuit)
-      : false;
+    const hasTrumpSuit = trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false;
 
     if (hasTrumpSuit) {
       // Must play a trump suit card if available
-      const isValid = cardSuit === trumpSuit || isPermanentTrump(card);
-      console.log(
-        `Validation Result: ${isValid} (must play trump suit if available)`
-      );
+      const isValid = cardSuit === trumpSuit;
+      console.log(`Validation Result: ${isValid} (must play trump suit if available)`);
       return isValid;
     }
 
     // If the player has neither the leading suit nor trump suit, any card is valid
-    console.log(
-      `Validation Result: true (no leading suit or trump suit available)`
-    );
+    console.log(`Validation Result: true (no leading suit or trump suit available)`);
     return true;
   };
 
@@ -132,9 +91,14 @@ const TrickManager: React.FC<TrickManagerProps> = ({
 
     // Check if the trick is complete (all players have played a card)
     if (updatedTrick.length === players) {
-      onTrickComplete(updatedTrick); // Notify the parent component about the completed trick
-      setLeadingSuit(null); // Reset the leading suit for the next trick
-      setCurrentTrick([]); // Clear the trick for the next round
+      console.log("Trick is complete:", updatedTrick);
+
+      // Notify the parent component about the completed trick
+      onTrickComplete(updatedTrick);
+
+      // Reset for the next trick
+      setLeadingSuit(null);
+      setCurrentTrick([]);
     }
   };
 
