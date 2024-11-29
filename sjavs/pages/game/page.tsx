@@ -1,5 +1,5 @@
 import React from 'react';
-import CardLayout from '../../components/CardLayout';
+import CardLayout from "../../app/components/CardLayout";
 
 const Game = () => {
   return (
