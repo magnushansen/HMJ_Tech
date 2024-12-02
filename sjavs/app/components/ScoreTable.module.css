@@ -1,5 +1,7 @@
 .table {
-    border-collapse: collapse;
+  position: relative;
+  left: 90%;
+    border: 1px;
     width: 10%;
   }
   

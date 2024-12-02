@@ -26,6 +26,7 @@ const Card: React.FC<CardProps> = ({ rank, suit, isCentered, isClickable, onClic
         src={imageSrc}
         alt={`${rank} of ${suit}`}
         className={styles.cardImage}
+        loading="lazy" // Enables lazy loading for better performance
         onError={(e) => {
           console.log("Image not found:", imageSrc); // Debug log if the image doesn't load
           e.currentTarget.style.display = "none"; // Hide the card image if it fails to load

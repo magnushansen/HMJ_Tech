@@ -1,7 +1,7 @@
 // components/TrickHandler.tsx
 
 import React from "react";
-import { calculateTrickPoints, determineWinningTeam } from "../../lib/gameUtils";
+import { calculateTrickPoints } from "../../lib/gameUtils";
 
 interface TrickHandlerProps {
   trick: { player: number; card: string }[];
@@ -19,11 +19,10 @@ const TrickHandler: React.FC<TrickHandlerProps> = ({
   React.useEffect(() => {
     if (trick.length === 4) { // Ensure the trick is complete
       const trickPoints = calculateTrickPoints(trick); // Calculate points
-      const winningTeam = determineWinningTeam(trick, trumpSuit); // Determine the winning team
+
 
       setScores((prevScores) => {
         const updatedScores = [...prevScores];
-        updatedScores[winningTeam] += trickPoints;
         console.log(`Points for this trick: ${trickPoints}`);
         console.log(`Updated Scores - Team 1: ${updatedScores[0]}, Team 2: ${updatedScores[1]}`);
         return updatedScores;

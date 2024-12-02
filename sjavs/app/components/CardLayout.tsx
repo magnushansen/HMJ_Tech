@@ -10,7 +10,6 @@ import {
   shuffleDeck,
   dealCards,
   chooseTrump,
-  calculateTrickPoints,
   determineTrickWinner // Add this line
 } from "../../lib/gameUtils";
 
@@ -38,22 +37,6 @@ const CardLayout: React.FC = () => {
     }
   };
 
-  // Function to handle when a round is complete
-  const handleRoundComplete = () => {
-    const team1Score = calculateTeamScore(0); // Calculate Team 1's score
-    const team2Score = calculateTeamScore(1); // Calculate Team 2's score
-
-    // Update the round scores state
-    setRoundScores((prevScores) => [...prevScores, [team1Score, team2Score]]);
-  };
-
-  const calculateTeamScore = (team: number): number => {
-    const teamPlayers = team === 0 ? [0, 2] : [1, 3];
-    return currentTrick
-      .filter((play) => teamPlayers.includes(play.player))
-      .reduce((acc, play) => acc + calculateTrickPoints([play]), 0);
-  };
-
   // Function to handle when a trick is completed
   const handleTrickComplete = (trick: { player: number; card: string }[]) => {
     console.log("Trick is complete:", trick);
@@ -63,7 +46,6 @@ const CardLayout: React.FC = () => {
     console.log(`Player ${trickWinner + 1} wins the trick.`);
 
     // Reset for the next trick
-    setLeadingSuit(null); // Reset the leading suit for the next round
     setCurrentTrick([]);
 };
 
@@ -151,7 +133,5 @@ const CardLayout: React.FC = () => {
 };
 
 export default CardLayout;
-function setLeadingSuit(arg0: null) {
-  throw new Error("Function not implemented.");
-}
+
 
