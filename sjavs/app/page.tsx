@@ -60,12 +60,12 @@ export default function Menu() {
 
                     {/* Create Lobby Button */}
                     <li>
-                        <button
-                            onClick={createLobby} // Call the createLobby function on click
+                        <Link
+                            href="/createlobby"
                             className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
                         >
                             Create Lobby
-                        </button>
+                        </Link>
                     </li>
 
                     {/* Tournament Button */}

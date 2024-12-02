@@ -3,12 +3,20 @@ import { useRouter } from "next/navigation"; // For programmatic navigation
 
 import { useParams } from 'next/navigation';
 
-export default function LobbyPage() {
-    const router = useRouter(); // Router for navigation
-
-    // Use React's useParams hook to get dynamic route parameters
+export default async function LobbyPage() {
     const params = useParams();
     const { lobbyId } = params; // Get lobbyId from the URL
+    const router = useRouter();
+
+    const { data, error } = await supabase
+        .from("session")
+        .select("id")
+        .eq("id", lobbyId)
+        .single()
+
+    if (error || data.id != lobbyId) {
+        redirect("/createlobby")
+    }
 
     return (
         <div className="h-screen bg-green-800 text-white font-sans">
