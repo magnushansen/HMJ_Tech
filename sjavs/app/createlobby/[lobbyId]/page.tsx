@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from "next/navigation"; // For programmatic navigation
+import { redirect, useRouter } from "next/navigation"; // For programmatic navigation
 import { useParams } from 'next/navigation';
 import supabase from '../../../lib/supabase'; // Import your Supabase client
 
 const LobbyPage = () => {
-    const params = useParams();
+    const params = useParams() as { lobbyId: string };
     const router = useRouter();
     const { lobbyId } = params; // Get lobbyId from the URL
 
@@ -21,19 +21,19 @@ const LobbyPage = () => {
             console.error(`Failed to update user count: ${action}`, error);
         }
     };
+    const validateLobby = async () => {
+        const { data, error } = await supabase
+            .from("session")
+            .select("id")
+            .eq("id", lobbyId)
+            .single();
+
+        if (data.id !== lobbyId) {
+            redirect("/createlobby");
+        }
+    };
 
     useEffect(() => {
-        const validateLobby = async () => {
-            const { data, error } = await supabase
-                .from("session")
-                .select("id")
-                .eq("id", lobbyId)
-                .single();
-
-            if (error || !data || data.id !== lobbyId) {
-                router.push("/createlobby");
-            }
-        };
 
         // Validate lobby existence
         validateLobby();

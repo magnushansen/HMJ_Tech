@@ -16,7 +16,7 @@ export default function CreateLobby() {
                 .from('session')
                 .insert({
                     active: true,  // session is active
-                    count: +1       // no players initially
+                    player_count: +1       // no players initially
                 })
                 .select() // Fetch the inserted data to get the ID
                 .single(); // Ensures we get a single object instead of an array
