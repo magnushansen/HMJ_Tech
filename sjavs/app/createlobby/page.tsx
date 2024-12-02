@@ -9,13 +9,12 @@ export default function CreateLobby() {
     const [error, setError] = useState(null); // State for errors
     const router = useRouter(); // Router for navigation
 
-    const createSession = async (isPrivate) => {
+    const createSession = async () => {
         try {
             // Insert a new session with specific values
             const { data, error } = await supabase
                 .from('session')
                 .insert({
-                    public: !isPrivate, // private session
                     active: true,  // session is active
                     count: +1       // no players initially
                 })
@@ -25,13 +24,9 @@ export default function CreateLobby() {
             if (error) {
                 console.error('Error creating private session:', error.message);
                 alert('Failed to create session');
-            } if (!isPrivate) {
-                console.log('Private session created:', data);
-                alert('Private session created successfully!');
-                router.push(`/createlobby/${data.id}`);
             } else {
-                console.log('Public session created: ', data);
-                alert('Public lobby created!')
+                console.log('Private session created: ', data);
+                alert('Private lobby created!')
                 router.push(`/createlobby/${data.id}`);
             }
             } catch (error) {
@@ -51,17 +46,10 @@ export default function CreateLobby() {
 
             <ul className="space-y-4 flex flex-col items-center">
             <li>
-                <button onClick={() => createSession(true)}
+                <button onClick={() => createSession()}
                 className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
                 >
-                Create Public Lobby
-                </button>
-            </li>
-            <li>
-                <button onClick={() => createSession(false)}
-                className="block w-60 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105"
-                >
-                Create Private Lobby
+                Create Private Session
                 </button>
             </li>
             <li>
