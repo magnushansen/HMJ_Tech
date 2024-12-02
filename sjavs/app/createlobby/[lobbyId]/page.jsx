@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from "next/navigation"; // For programmatic navigation
-
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 export default async function LobbyPage() {
