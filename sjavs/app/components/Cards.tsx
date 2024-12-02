@@ -2,6 +2,11 @@
 
 import React from "react";
 import styles from "./CardAnimation.module.css";
+import {
+  getCardValue,
+  getCardRank
+} from "../../lib/gameUtils";
+
 
 interface CardProps {
   rank: string; // The rank of the card (e.g., "Ace", "King", etc.)

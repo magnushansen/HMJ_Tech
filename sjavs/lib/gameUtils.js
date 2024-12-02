@@ -33,13 +33,13 @@ function getCardSuit(card) {
 
 function getCardValue(card) {
     const value = card.split(' ')[0];
-    const cardPoints = { 'A': 11, 'K': 4, 'Q': 3, 'J': 2, '10': 10, '9': 0, '8': 0, '7': 0 };
+    const cardPoints = { 'ACE': 11, 'KING': 4, 'QUEEN': 3, 'JACK': 2, '10': 10, '9': 0, '8': 0, '7': 0 };
     return cardPoints[value] || 0;
 }
 
 function getCardRank(card) {
     const value = card.split(' ')[0];
-    const cardRankings = { 'A': 8, 'K': 7, 'Q': 6, 'J': 5, '10': 4, '9': 3, '8': 2, '7': 1 };
+    const cardRankings = { 'ACE': 8, 'KING': 7, 'QUEEN': 6, 'JACK': 5, '10': 4, '9': 3, '8': 2, '7': 1 };
     return cardRankings[value];
 }
 
@@ -154,7 +154,7 @@ function determineTrickWinner(trick, trumpSuit) {
 
 
 function calculateTrickPoints(trick) {
-    const cardPoints = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
+    const cardPoints = { 'ACE': 11, '10': 10, 'KING': 4, 'QUEEN': 3, 'JACK': 2, '9': 0, '8': 0, '7': 0 };
 
     return trick.reduce((total, play) => {
         const cardValue = play.card.split(' ')[0];
