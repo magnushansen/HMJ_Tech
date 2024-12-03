@@ -28,9 +28,9 @@ const LobbyPage = () => {
             .eq("id", lobbyId)
             .single();
 
-        if (!data || data.id !== lobbyId) {
-            redirect("/createlobby");
-        }
+        // if (!data || data.id !== lobbyId) {
+        //     redirect("/createlobby");
+        // }
     };
 
     useEffect(() => {

@@ -1,7 +1,9 @@
-'use client'
+'use client';
+
 import { useRouter } from "next/navigation"; // For programmatic navigation
 import { createClient } from "@supabase/supabase-js";
 import React, { useState } from "react";
+import { useUser } from "@clerk/nextjs"; // Clerk hook for user info
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -12,10 +14,19 @@ export default function JoinLobby() {
     const [lobbyId, setLobbyId] = useState(""); // State for input field
     const [error, setError] = useState(null); // State for errors
     const router = useRouter(); // Router for navigation
+    const { user } = useUser(); // Clerk user details
 
     // Function to join a lobby
     const joinLobby = async () => {
         try {
+            // Extract user email from Clerk
+            const email = user?.emailAddresses[0]?.emailAddress || null;
+
+            if (!email) {
+                alert("User email not found!");
+                return;
+            }
+
             // Check if the lobby exists and is active
             const { data, error } = await supabase
                 .from("session")
@@ -31,8 +42,8 @@ export default function JoinLobby() {
             if (data.player_count >= 4) {
                 alert("Lobby is full.");
                 return;
-            } 
-            
+            }
+
             // Update the player count in the lobby
             const { error: updateError } = await supabase
                 .from("session")
@@ -42,6 +53,21 @@ export default function JoinLobby() {
             if (updateError) {
                 throw new Error("Failed to join the lobby. Please try again.");
             }
+
+            // Step 2: Match email in `user_data` and update the `session_id`
+            const { error: userUpdateError } = await supabase
+                .from('user_data')
+                .update({ session_id: lobbyId }) // Update with the session ID
+                .eq('email', email); // Match by email
+
+            if (userUpdateError) {
+                console.error('Error updating user_data with session ID:', userUpdateError.message);
+                alert('Failed to update user_data with session ID');
+                return;
+            }
+
+            console.log('User data updated successfully with session ID.');
+
             // Redirect to the lobby page
             router.push(`/createlobby/${lobbyId}`);
 
