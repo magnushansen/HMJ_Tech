@@ -39,7 +39,7 @@ export default function JoinLobby() {
                 throw new Error("Lobby not found or is inactive.");
             }
 
-            if (data.player_count >= 4) {
+            if (data.player_count > 4) {
                 alert("Lobby is full.");
                 return;
             }
