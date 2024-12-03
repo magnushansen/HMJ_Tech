@@ -27,6 +27,7 @@ export default function CreateLobby() {
                 .insert({
                     active: true, // Session is active
                     player_count: 1, // Initial player count
+                    host_id: email, // Host email
                 })
                 .select() // Fetch the inserted data
                 .single(); // Get a single object (session)

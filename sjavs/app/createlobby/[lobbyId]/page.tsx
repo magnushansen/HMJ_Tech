@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, redirect } from "next/navigation"; // For programmatic navigation
 import supabase from '../../../lib/supabase'; // Import your Supabase client
+import { useUser } from "@clerk/nextjs"; // Clerk hook for user info
 
 const LobbyPage = () => {
     const params = useParams() as { lobbyId: string };
@@ -10,6 +11,8 @@ const LobbyPage = () => {
     const { lobbyId } = params; // Get lobbyId from the URL
     const [users, setUsers] = useState<{ email: string; username: string }[]>([]); // State to store users in the lobby
     const [error, setError] = useState<string | null>(null); // State for errors
+    const [isHost, setIsHost] = useState<boolean>(false); // State to check if the user is the host
+    const { user } = useUser(); // Clerk user details
 
     const updateUserCount = async (action: 'join' | 'leave') => {
         try {
@@ -26,13 +29,19 @@ const LobbyPage = () => {
     const validateLobby = async () => {
         const { data, error } = await supabase
             .from("session")
-            .select("id")
+            .select("id, host_id")
             .eq("id", lobbyId)
             .single();
 
         if (error || !data) {
             console.error("Error validating lobby:", error);
             redirect("/createlobby");
+        } else {
+            // Check if the current user is the host
+            const email = user?.emailAddresses[0]?.emailAddress || null;
+            if (email && data.host_id === email) {
+                setIsHost(true);
+            }
         }
     };
 
@@ -50,6 +59,13 @@ const LobbyPage = () => {
         }
     };
 
+    const startGame = async () => {
+        // Logic to start the game
+        console.log("Game started!");
+        // Navigate to the game page
+        router.push("/game");
+    };
+
     useEffect(() => {
         // Validate lobby existence
         validateLobby();
@@ -64,7 +80,7 @@ const LobbyPage = () => {
         return () => {
             updateUserCount('leave');
         };
-    }, [lobbyId, router]);
+    }, [lobbyId, router, user]);
 
     return (
         <div className="h-screen bg-green-800 text-white font-sans">
@@ -82,6 +98,14 @@ const LobbyPage = () => {
                         ))}
                     </ul>
                 </div>
+                {isHost && (
+                    <button
+                        onClick={startGame}
+                        className="block w-48 bg-blue-500 hover:bg-blue-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105 mt-4"
+                    >
+                        Start Game
+                    </button>
+                )}
                 <button
                     onClick={() => router.push("/")}
                     className="block w-48 bg-orange-500 hover:bg-orange-600 text-center text-white font-semibold py-3 px-6 rounded shadow-md transition-transform transform hover:scale-105 mt-4"
