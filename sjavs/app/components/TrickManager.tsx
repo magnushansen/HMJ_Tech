@@ -40,11 +40,11 @@ const TrickManager: React.FC<TrickManagerProps> = ({
     const cardSuit = getCardSuit(card);
 
     // console.log(`Player ${playerIndex + 1} attempting to play ${card}`);
-    console.log(`Leading Suit: ${leadingSuit}, Trump Suit: ${trumpSuit}`);
-    console.log(`Player has leading suit: ${playerHasSuit(hands[playerIndex], leadingSuit)}`);
-    console.log(
-      `Player has trump suit: ${trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false}`
-    );
+    // console.log(`Leading Suit: ${leadingSuit}, Trump Suit: ${trumpSuit}`);
+    // console.log(`Player has leading suit: ${playerHasSuit(hands[playerIndex], leadingSuit)}`);
+    // console.log(
+    //   `Player has trump suit: ${trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false}`
+    // );
 
     // If there is no leading suit yet, any card is valid
     if (!leadingSuit) {

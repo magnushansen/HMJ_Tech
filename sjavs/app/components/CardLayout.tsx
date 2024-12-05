@@ -44,7 +44,7 @@ const CardLayout: React.FC = () => {
       return;
     }
   
-    console.log("Trick is complete:", trick);
+    console.log("Trick is complete:", trick, "Derp");
   
     // Determine the winner and calculate the points
     const trickWinner = determineTrickWinner(trick, trumpSuit);
@@ -72,13 +72,13 @@ const CardLayout: React.FC = () => {
         `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`
       );
   
+      setCurrentTrick([]); // Clear the trick
       return newScores;
     });
   
     // Reset the trick after processing
     setTimeout(() => {
       console.log("Resetting current trick...");
-      setCurrentTrick([]); // Clear the trick
     }, 500); // Small delay for UI updates
   };
   
