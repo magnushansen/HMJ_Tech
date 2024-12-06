@@ -2,11 +2,6 @@
 
 import React from "react";
 import styles from "./CardAnimation.module.css";
-import {
-  getCardValue,
-  getCardRank
-} from "../../lib/gameUtils";
-
 
 interface CardProps {
   rank: string; // The rank of the card (e.g., "Ace", "King", etc.)
@@ -17,24 +12,30 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ rank, suit, isCentered, isClickable, onClick }) => {
-  const imageName = `${rank}_of_${suit}.png`; // Dynamically create the card image name
-  const imageSrc = `/assets/${imageName}`; // Image source path for the card
+  const imageName = `${rank}_of_${suit}.png`;
+  const imageSrc = `/assets/${imageName}`;
+
+  // Log the card's props when it is rendered
+  console.log(`Rendering card: ${rank} of ${suit}, Centered: ${isCentered}, Clickable: ${isClickable}`);
 
   return (
     <div
       className={`${styles.card} ${isCentered ? styles.centered : ""} ${
         isClickable ? "" : styles.disabled
       }`}
-      onClick={isClickable ? onClick : undefined} // Only allow clicks if the card is clickable
+      onClick={isClickable ? () => {
+        console.log(`Card clicked: ${rank} of ${suit}`);
+        onClick();
+      } : undefined} // Only allow clicks if the card is clickable
     >
       <img
         src={imageSrc}
         alt={`${rank} of ${suit}`}
         className={styles.cardImage}
-        loading="lazy" // Enables lazy loading for better performance
+        loading="lazy"
         onError={(e) => {
-          console.log("Image not found:", imageSrc); // Debug log if the image doesn't load
-          e.currentTarget.style.display = "none"; // Hide the card image if it fails to load
+          console.log("Image not found:", imageSrc);
+          e.currentTarget.style.display = "none";
         }}
       />
     </div>

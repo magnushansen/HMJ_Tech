@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./Cards";
 import TrickManager from "./TrickManager";
 import TurnManager from "./TurnManager";
 import ScoreTable from "./ScoreTable"; 
+import Player from "./Player"; // Import the Player component
 import styles from "./CardLayout.module.css";
 import {
   shuffleDeck,
@@ -12,7 +13,7 @@ import {
   chooseTrump,
   determineTrickWinner, 
   calculateTrickPoints
-} from "../../lib/gameUtils";
+} from "../../../lib/gameUtils";
 
 const CardLayout: React.FC = () => {
   const [hands, setHands] = useState<string[][]>([]); // Hands for each player
@@ -36,6 +37,10 @@ const CardLayout: React.FC = () => {
       startGame(); // Retry if trump is not chosen
     }
   };
+
+  useEffect(() => {
+    startGame(); // Start the game automatically when the component mounts
+  }, []);
 
   const handleTrickComplete = (trick: { player: number; card: string }[]) => {
     // Ensure the trick has exactly the right number of cards before processing
@@ -69,12 +74,12 @@ const CardLayout: React.FC = () => {
       newScores[newScores.length - 1][winningTeam] += trickPoints;
   
       console.log(
-        `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`
-      );
+        `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`)
+      
   
       setCurrentTrick([]); // Clear the trick
       return newScores;
-    });
+    })
   
     // Reset the trick after processing
     setTimeout(() => {
@@ -96,10 +101,6 @@ const CardLayout: React.FC = () => {
         >
           {({ leadingSuit, validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
-              {/* Start Game Button */}
-              <button onClick={startGame} className={styles.startButton}>
-                Start Game
-              </button>
               {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
               <p className={styles.currentTurn}>Player Turn: {currentTurn + 1}</p>
 
@@ -119,42 +120,17 @@ const CardLayout: React.FC = () => {
 
               {/* Player hands */}
               {hands.map((hand, playerIndex) => (
-                <div
+                <Player
                   key={playerIndex}
-                  className={`${styles.hand} ${styles[`player${playerIndex + 1}`]}`}
-                >
-                  {hand.map((card) => (
-                    <Card
-                      key={card}
-                      rank={card.split(" ")[0]}
-                      suit={card.split(" ")[1]}
-                      onClick={() => {
-                        if (playerIndex === currentTurn) {
-                          if (validatePlay(card, playerIndex)) {
-                            console.log(`Player ${playerIndex + 1} played ${card}`);
-                            playCard(card, playerIndex); // Register the play
-                            setCenteredCard(card); // Display the played card in the center
-                            setHands((prevHands) =>
-                              prevHands.map((h, i) =>
-                                i === playerIndex ? h.filter((c) => c !== card) : h
-                              )
-                            );
-                            nextTurn(); // Move to the next player's turn
-                          } else {
-                            alert(
-                              `Invalid play! You must follow the ${leadingSuit} suit or play a ${trumpSuit} card if possible.`
-                            );
-                          }
-                        }
-                      }}
-                      isClickable={
-                        playerIndex === currentTurn &&
-                        validatePlay(card, playerIndex)
-                      }
-                      isCentered={false}
-                    />
-                  ))}
-                </div>
+                  playerIndex={playerIndex}
+                  hand={hand}
+                  currentTurn={currentTurn}
+                  validatePlay={validatePlay}
+                  playCard={playCard}
+                  setCenteredCard={setCenteredCard}
+                  setHands={setHands}
+                  nextTurn={nextTurn}
+                />
               ))}
 
               {/* Score Table */}

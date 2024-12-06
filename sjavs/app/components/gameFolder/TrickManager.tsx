@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { getCardSuit, playerHasSuit } from "../../lib/gameUtils";
+import { getCardSuit, playerHasSuit } from "../../../lib/gameUtils";
 
 interface TrickManagerProps {
   players: number; // Number of players
