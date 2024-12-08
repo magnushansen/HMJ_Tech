@@ -47,6 +47,8 @@ function playerHasSuit(hand, suit) {
     return hand.some(card => getCardSuit(card) === suit);
 }
 
+const permanentTrumpHierarchy = ['QUEEN CLUBS', 'QUEEN SPADES', 'JACK CLUBS', 'JACK SPADES', 'JACK HEARTS', 'JACK DIAMONDS'];
+
 function chooseTrump(hands) {
     const suits = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'];
     const trumpCandidates = [];
@@ -72,19 +74,28 @@ function chooseTrump(hands) {
             }
         }
 
+        // Include permanent trump cards that aren't of the longest suit
+        hand.forEach(card => {
+            if (permanentTrumpHierarchy.includes(card) && getCardSuit(card) !== longestSuit) {
+                suitCounts[longestSuit]++;
+            }
+        });
+
+        // Update the maxCount after including permanent trump cards
+        maxCount = suitCounts[longestSuit];
+
         trumpCandidates.push({ playerIndex, suit: longestSuit, count: maxCount });
     });
 
-    trumpCandidates.sort((a, b) => b.count - a.count || suits.indexOf(a.suit) - suits.indexOf(b.suit));
-
-    // Ensure clubs are prioritized in case of a tie
+    // Sort trump candidates by count and prioritize clubs in case of a tie
     trumpCandidates.sort((a, b) => {
         if (b.count === a.count) {
             if (a.suit === 'CLUBS') return -1;
             if (b.suit === 'CLUBS') return 1;
         }
-        return 0;
+        return b.count - a.count;
     });
+
     if (trumpCandidates[0].count < 5) {
         console.log("No player has a trump holding of five or more cards. Re-dealing...");
         return null;
@@ -151,8 +162,6 @@ function determineTrickWinner(trick, trumpSuit) {
     return winningPlayer;
 }
 
-
-
 function calculateTrickPoints(trick) {
     const cardPoints = { 'ACE': 11, '10': 10, 'KING': 4, 'QUEEN': 3, 'JACK': 2, '9': 0, '8': 0, '7': 0 };
 
@@ -161,7 +170,6 @@ function calculateTrickPoints(trick) {
         return total + (cardPoints[cardValue] || 0);
     }, 0);
 }
-
 
 export {
     shuffleDeck,
