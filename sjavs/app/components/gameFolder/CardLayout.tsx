@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Card from "./Cards";
 import TrickManager from "./TrickManager";
 import TurnManager from "./TurnManager";
 import ScoreTable from "./ScoreTable"; 
-import Player from "./Player"; // Import the Player component
 import styles from "./CardLayout.module.css";
 import {
   shuffleDeck,
@@ -21,6 +20,7 @@ const CardLayout: React.FC = () => {
   const [centeredCard, setCenteredCard] = useState<string | null>(null); // Track the centered card
   const [roundScores, setRoundScores] = useState<number[][]>([]); // Each entry is [team1Score, team2Score]
   const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Current trick state
+  const [startingPlayer, setStartingPlayer] = useState(0); // Player who starts the new trick
 
   // Function to start the game
   const startGame = () => {
@@ -32,15 +32,12 @@ const CardLayout: React.FC = () => {
       setHands(dealtHands); // Set player hands
       setTrumpSuit(trumpInfo.trumpSuit); // Set the trump suit
       setRoundScores([]); // Reset scores for a new game
+      setStartingPlayer(trumpInfo.trumpPlayer); // Set the starting player
     } else {
       alert("Re-dealing as no player has a strong trump suit.");
       startGame(); // Retry if trump is not chosen
     }
   };
-
-  useEffect(() => {
-    startGame(); // Start the game automatically when the component mounts
-  }, []);
 
   const handleTrickComplete = (trick: { player: number; card: string }[]) => {
     // Ensure the trick has exactly the right number of cards before processing
@@ -49,7 +46,7 @@ const CardLayout: React.FC = () => {
       return;
     }
   
-    console.log("Trick is complete:", trick, "Derp");
+    console.log("Trick is complete:", trick);
   
     // Determine the winner and calculate the points
     const trickWinner = determineTrickWinner(trick, trumpSuit);
@@ -74,12 +71,15 @@ const CardLayout: React.FC = () => {
       newScores[newScores.length - 1][winningTeam] += trickPoints;
   
       console.log(
-        `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`)
-      
+        `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`
+      );
   
       setCurrentTrick([]); // Clear the trick
       return newScores;
-    })
+    });
+  
+    // Set the starting player for the next trick
+    setStartingPlayer(trickWinner);
   
     // Reset the trick after processing
     setTimeout(() => {
@@ -89,8 +89,8 @@ const CardLayout: React.FC = () => {
   
 
   return (
-    <TurnManager players={hands.length}>
-      {({ currentTurn, nextTurn }) => (
+    <TurnManager players={hands.length} startingPlayer={startingPlayer}>
+      {({ currentTurn, nextTurn, setStartingPlayer }) => (
         <TrickManager
           players={hands.length}
           trumpSuit={trumpSuit}
@@ -101,6 +101,10 @@ const CardLayout: React.FC = () => {
         >
           {({ validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
+              {/* Start Game Button */}
+              <button onClick={startGame} className={styles.startButton}>
+                Start Game
+              </button>
               {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
               <p className={styles.currentTurn}>Player Turn: {currentTurn + 1}</p>
 
@@ -120,17 +124,42 @@ const CardLayout: React.FC = () => {
 
               {/* Player hands */}
               {hands.map((hand, playerIndex) => (
-                <Player
+                <div
                   key={playerIndex}
-                  playerIndex={playerIndex}
-                  hand={hand}
-                  currentTurn={currentTurn}
-                  validatePlay={validatePlay}
-                  playCard={playCard}
-                  setCenteredCard={setCenteredCard}
-                  setHands={setHands}
-                  nextTurn={nextTurn}
-                />
+                  className={`${styles.hand} ${styles[`player${playerIndex + 1}`]}`}
+                >
+                  {hand.map((card) => (
+                    <Card
+                      key={card}
+                      rank={card.split(" ")[0]}
+                      suit={card.split(" ")[1]}
+                      onClick={() => {
+                        if (playerIndex === currentTurn) {
+                          if (validatePlay(card, playerIndex)) {
+                            console.log(`Player ${playerIndex + 1} played ${card}`);
+                            playCard(card, playerIndex); // Register the play
+                            setCenteredCard(card); // Display the played card in the center
+                            setHands((prevHands) =>
+                              prevHands.map((h, i) =>
+                                i === playerIndex ? h.filter((c) => c !== card) : h
+                              )
+                            );
+                            nextTurn(); // Move to the next player's turn
+                          } else {
+                            alert(
+                              `Invalid play! You must follow the ${trumpSuit} suit or play a ${trumpSuit} card if possible.`
+                            );
+                          }
+                        }
+                      }}
+                      isClickable={
+                        playerIndex === currentTurn &&
+                        validatePlay(card, playerIndex)
+                      }
+                      isCentered={false}
+                    />
+                  ))}
+                </div>
               ))}
 
               {/* Score Table */}

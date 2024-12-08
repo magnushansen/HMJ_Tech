@@ -20,6 +20,7 @@ const CardLayout: React.FC = () => {
   const [centeredCard, setCenteredCard] = useState<string | null>(null); // Track the centered card
   const [roundScores, setRoundScores] = useState<number[][]>([]); // Each entry is [team1Score, team2Score]
   const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Current trick state
+  const [startingPlayer, setStartingPlayer] = useState(0); // Player who starts the new trick
 
   // Function to start the game
   const startGame = () => {
@@ -31,6 +32,7 @@ const CardLayout: React.FC = () => {
       setHands(dealtHands); // Set player hands
       setTrumpSuit(trumpInfo.trumpSuit); // Set the trump suit
       setRoundScores([]); // Reset scores for a new game
+      setStartingPlayer(trumpInfo.trumpPlayer); // Set the starting player
     } else {
       alert("Re-dealing as no player has a strong trump suit.");
       startGame(); // Retry if trump is not chosen
@@ -76,6 +78,9 @@ const CardLayout: React.FC = () => {
       return newScores;
     });
   
+    // Set the starting player for the next trick
+    setStartingPlayer(trickWinner);
+  
     // Reset the trick after processing
     setTimeout(() => {
       console.log("Resetting current trick...");
@@ -84,8 +89,8 @@ const CardLayout: React.FC = () => {
   
 
   return (
-    <TurnManager players={hands.length}>
-      {({ currentTurn, nextTurn }) => (
+    <TurnManager players={hands.length} startingPlayer={startingPlayer}>
+      {({ currentTurn, nextTurn, setStartingPlayer }) => (
         <TrickManager
           players={hands.length}
           trumpSuit={trumpSuit}
