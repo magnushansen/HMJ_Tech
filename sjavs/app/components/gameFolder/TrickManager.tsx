@@ -11,7 +11,6 @@ interface TrickManagerProps {
   setCenteredCard: React.Dispatch<React.SetStateAction<string | null>>; // Function to set centered card
   onTrickComplete: (trick: { player: number; card: string }[]) => void; // Callback when trick is complete
   children: (props: {
-    leadingSuit: string | null;
     currentTrick: { player: number; card: string }[];
     validatePlay: (card: string, playerIndex: number) => boolean;
     playCard: (card: string, playerIndex: number) => void;
@@ -27,7 +26,6 @@ const TrickManager: React.FC<TrickManagerProps> = ({
   onTrickComplete,
   children,
 }) => {
-  const [leadingSuit, setLeadingSuit] = useState<string | null>(null); // The suit of the first card played in a trick
   const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Cards currently played in the ongoing trick
 
   /**
@@ -39,31 +37,13 @@ const TrickManager: React.FC<TrickManagerProps> = ({
   const validatePlay = (card: string, playerIndex: number): boolean => {
     const cardSuit = getCardSuit(card);
 
-    // console.log(`Player ${playerIndex + 1} attempting to play ${card}`);
-    // console.log(`Leading Suit: ${leadingSuit}, Trump Suit: ${trumpSuit}`);
-    // console.log(`Player has leading suit: ${playerHasSuit(hands[playerIndex], leadingSuit)}`);
-    // console.log(
-    //   `Player has trump suit: ${trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false}`
-    // );
-
-    // If there is no leading suit yet, any card is valid
-    if (!leadingSuit) {
-      return true;
-    }
-
-    // Check if the player has cards of the leading suit
-    const hasLeadingSuit = playerHasSuit(hands[playerIndex], leadingSuit);
-    if (hasLeadingSuit) {
-      return cardSuit === leadingSuit; // Must follow the leading suit
-    }
-
     // Check if the player has trump cards
     const hasTrumpSuit = trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false;
     if (hasTrumpSuit) {
       return cardSuit === trumpSuit; // Must play trump suit if available
     }
 
-    // If no leading suit or trump cards, any card is valid
+    // If no trump cards, any card is valid
     return true;
   };
 
@@ -73,50 +53,41 @@ const TrickManager: React.FC<TrickManagerProps> = ({
       console.error(`Player ${playerIndex + 1} has already played in this trick.`);
       return;
     }
-  
-    const cardSuit = getCardSuit(card);
-  
-    // Set the leading suit if it's the first card in the trick
-    if (!leadingSuit) {
-      setLeadingSuit(cardSuit);
-    }
-  
+
     // Add the card to the current trick
     const updatedTrick = [...currentTrick, { player: playerIndex, card }];
     setCurrentTrick(updatedTrick);
-  
+
     // Remove the card from the player's hand
     setHands((prevHands) =>
       prevHands.map((hand, index) =>
         index === playerIndex ? hand.filter((c) => c !== card) : hand
       )
     );
-  
+
     // Display the played card in the center
     setCenteredCard(card);
-  
+
     console.log(`Player ${playerIndex + 1} played ${card}`);
     console.log("Updated Trick:", updatedTrick);
-  
+
     // If all players have played, process the trick
     if (updatedTrick.length === players) {
       console.log("Trick is complete:", updatedTrick);
       onTrickComplete(updatedTrick);
-  
+
       // Reset the trick after processing
       setTimeout(() => {
-        console.log("Resetting current trick and leading suit...");
+        console.log("Resetting current trick...");
         setCurrentTrick([]);
-        setLeadingSuit(null);
         setCenteredCard(null);
       }, 500); // Slight delay for UI updates
     }
   };
-  
+
   return (
     <>
       {children({
-        leadingSuit,
         currentTrick,
         validatePlay,
         playCard,

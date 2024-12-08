@@ -99,7 +99,7 @@ const CardLayout: React.FC = () => {
           setCenteredCard={setCenteredCard} // Pass setCenteredCard to display the played card
           onTrickComplete={handleTrickComplete} // Process when the trick is complete
         >
-          {({ leadingSuit, validatePlay, playCard }) => (
+          {({ validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
               {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
               <p className={styles.currentTurn}>Player Turn: {currentTurn + 1}</p>

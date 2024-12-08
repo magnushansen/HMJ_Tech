@@ -94,7 +94,7 @@ const CardLayout: React.FC = () => {
           setCenteredCard={setCenteredCard} // Pass setCenteredCard to display the played card
           onTrickComplete={handleTrickComplete} // Process when the trick is complete
         >
-          {({ trumpSuit: trumpSuit, validatePlay, playCard }) => (
+          {({ validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
               {/* Start Game Button */}
               <button onClick={startGame} className={styles.startButton}>
