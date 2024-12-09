@@ -1,0 +1,28 @@
+image: node:18 # Use a Node.js image with the required version
+
+pipelines:
+  default:
+    - step:
+        name: Install Dependencies
+        caches:
+          - node
+        script:
+          - echo "Installing dependencies..."
+          - npm install
+    - step:
+        name: Run Tests
+        script:
+          - echo "Running tests..."
+          - npm run test # Replace with your test script
+    - step:
+        name: Build App
+        script:
+          - echo "Building the app..."
+          - npm run build # Build your Next.js app
+    - step:
+        name: Deploy to Production
+        deployment: production
+        script:
+          - echo "Deploying to production..."
+          - npm install -g vercel # Install Vercel CLI if you use Vercel
+          - vercel deploy --prod --token $VERCEL_TOKEN # Use your Vercel token here
