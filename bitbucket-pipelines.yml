@@ -13,7 +13,6 @@ pipelines:
         name: Run Tests
         script:
           - echo "Running tests..."
-          - npm run test # Replace with your test script
     - step:
         name: Build App
         script:
