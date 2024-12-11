@@ -4,7 +4,7 @@ const nextConfig = {
       return [
         {
           source: '/',
-          destination: '/game',
+          destination: '/',
           permanent: true, // Set to `true` if this is a permanent redirect (301)
         },
       ];
