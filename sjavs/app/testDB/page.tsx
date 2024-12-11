@@ -1,4 +1,4 @@
-import supabase from './../../../lib/supabase.js';
+import supabase from './../../lib/supabase.js';
 
 async function fetchUsers() {
     try {
@@ -22,3 +22,7 @@ async function fetchUsers() {
 }
 
 fetchUsers();
+export default function TestDBPage() {
+    return <div>This is the TestDB page</div>;
+  }
+  

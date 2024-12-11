@@ -20,9 +20,8 @@ const Card: React.FC<CardProps> = ({ rank, suit, isCentered, isClickable, onClic
 
   return (
     <div
-      className={`${styles.card} ${isCentered ? styles.centered : ""} ${
-        isClickable ? "" : styles.disabled
-      }`}
+      className={`${styles.card} ${isCentered ? styles.centered : ""} ${isClickable ? "" : styles.disabled
+        }`}
       onClick={isClickable ? () => {
         console.log(`Card clicked: ${rank} of ${suit}`);
         onClick();
@@ -35,7 +34,7 @@ const Card: React.FC<CardProps> = ({ rank, suit, isCentered, isClickable, onClic
         loading="lazy"
         onError={(e) => {
           console.log("Image not found:", imageSrc);
-          e.currentTarget.style.display = "none";
+          e.currentTarget.src = "/assets/placeholder.png"; // Replace with a default placeholder image path
         }}
       />
     </div>

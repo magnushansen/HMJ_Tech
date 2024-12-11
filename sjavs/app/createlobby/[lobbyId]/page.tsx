@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams, redirect } from "next/navigation"; // For programmatic navigation
 import supabase from '../../../lib/supabase'; // Import your Supabase client
 import { useUser } from "@clerk/nextjs"; // Clerk hook for user info
@@ -14,7 +14,7 @@ const LobbyPage = () => {
     const [isHost, setIsHost] = useState<boolean>(false); // State to check if the user is the host
     const { user } = useUser(); // Clerk user details
 
-    const updateUserCount = async (action: 'join' | 'leave') => {
+    const updateUserCount = useCallback(async (action: 'join' | 'leave') => {
         try {
             await fetch('/api/trackUsers', {
                 method: 'POST',
@@ -24,9 +24,9 @@ const LobbyPage = () => {
         } catch (error) {
             console.error(`Failed to update user count: ${action}`, error);
         }
-    };
+    }, [lobbyId]);
 
-    const validateLobby = async () => {
+    const validateLobby = useCallback(async () => {
         const { data, error } = await supabase
             .from("session")
             .select("id, host_id")
@@ -37,15 +37,14 @@ const LobbyPage = () => {
             console.error("Error validating lobby:", error);
             redirect("/createlobby");
         } else {
-            // Check if the current user is the host
             const email = user?.emailAddresses[0]?.emailAddress || null;
             if (email && data.host_id === email) {
                 setIsHost(true);
             }
         }
-    };
+    }, [lobbyId, user]);
 
-    const fetchUsersInLobby = async () => {
+    const fetchUsersInLobby = useCallback(async () => {
         const { data, error } = await supabase
             .from("user_data")
             .select("email, username")
@@ -57,30 +56,22 @@ const LobbyPage = () => {
         } else {
             setUsers(data);
         }
-    };
+    }, [lobbyId]);
 
     const startGame = async () => {
-        // Logic to start the game
         console.log("Game started!");
-        // Navigate to the game page
         router.push("/game");
     };
 
     useEffect(() => {
-        // Validate lobby existence
         validateLobby();
-
-        // Fetch users in the lobby
         fetchUsersInLobby();
-
-        // Increment user count when the component mounts
         updateUserCount('join');
 
-        // Decrement user count when the component unmounts
         return () => {
             updateUserCount('leave');
         };
-    }, [lobbyId, router, user]);
+    }, [validateLobby, fetchUsersInLobby, updateUserCount]);
 
     return (
         <div className="h-screen bg-green-800 text-white font-sans">
