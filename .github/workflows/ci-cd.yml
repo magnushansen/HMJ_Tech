@@ -42,9 +42,11 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
+        working-directory: ./sjavs
         run: npm install
 
       - name: Build the application
+        working-directory: ./sjavs
         run: npm run build
 
   deploy:
@@ -54,9 +56,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install -g vercel
-          vercel deploy --prod --token $VERCEL_TOKEN
+          vercel deploy --prod --token $VERCEL_TOKEN --cwd ./sjavs
