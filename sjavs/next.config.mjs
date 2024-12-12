@@ -1,15 +1,8 @@
-/** @type {import('next').NextConfig} */
+// next.config.mjs
 const nextConfig = {
-    async redirects() {
-      return [
-        {
-          source: '/',
-          destination: '/sjavs/app', 
-          permanent: true,
-        },
-      ];
-    },
-  };
-  
-  export default nextConfig;
-  
+  reactStrictMode: true,
+  basePath: '',
+};
+
+
+export default nextConfig;
