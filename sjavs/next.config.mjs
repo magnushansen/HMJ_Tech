@@ -1,7 +1,7 @@
 // next.config.mjs
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '',
+  basePath: '/app',
 };
 
 
