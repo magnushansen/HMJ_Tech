@@ -1,7 +1,8 @@
 // next.config.mjs
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '/app',
+  swcMinify: true,
+  basePath: '',
 };
 
 
