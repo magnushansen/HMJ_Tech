@@ -44,7 +44,10 @@ const CardLayout: React.FC = () => {
     startGame(); // Start the game automatically when the component mounts
   }, []);
 
-  const handleTrickComplete = (trick: { player: number; card: string }[], setStartingPlayer: (player: number) => void) => {
+  const handleTrickComplete = (
+    trick: { player: number; card: string }[],
+    setStartingPlayer: (player: number) => void
+  ) => {
     // Ensure the trick has exactly the right number of cards before processing
     if (trick.length !== 4) {
       console.error("Incomplete trick: Not all players have played.");
@@ -72,25 +75,29 @@ const CardLayout: React.FC = () => {
         newScores.push([0, 0]);
       }
   
-      // Add the points to the appropriate team
-      newScores[newScores.length - 1][winningTeam] += trickPoints;
+      // Add the points to the appropriate team for the current round
+      const lastRound = [...newScores[newScores.length - 1]];
+      lastRound[winningTeam] += trickPoints;
+  
+      // Replace the last round with the updated scores
+      newScores[newScores.length - 1] = lastRound;
   
       console.log(
-        `Updated Scores: Team 1: ${newScores[newScores.length - 1][0]}, Team 2: ${newScores[newScores.length - 1][1]}`);
-      
-      setCurrentTrick([]); // Clear the trick
+        `Updated Scores: Team 1: ${lastRound[0]}, Team 2: ${lastRound[1]}`
+      );
+  
       return newScores;
     });
-
+  
     // Set the winner as the starting player for the next trick
     setStartingPlayer(trickWinner);
-
+  
     // Reset the trick after processing
     setTimeout(() => {
       console.log("Resetting current trick...");
     }, 500); // Small delay for UI updates
   };
-
+  
   return (
     <TurnManager players={hands.length} startingPlayer={0}>
       {({ currentTurn, nextTurn, setStartingPlayer }) => (
