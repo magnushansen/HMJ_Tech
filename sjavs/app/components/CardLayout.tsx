@@ -98,6 +98,7 @@ const CardLayout: React.FC = () => {
           setHands={setHands} // Pass the setHands function to update player hands
           setCenteredCard={setCenteredCard} // Pass setCenteredCard to display the played card
           onTrickComplete={handleTrickComplete} // Process when the trick is complete
+          setStartingPlayer={setStartingPlayer} // Pass setStartingPlayer to TrickManager
         >
           {({ validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
