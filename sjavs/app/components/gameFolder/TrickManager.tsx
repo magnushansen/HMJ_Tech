@@ -65,57 +65,66 @@ const TrickManager: React.FC<TrickManagerProps> = ({
   };
 
   const playCard = (card: string, playerIndex: number) => {
-    // Prevent playing a card if the player has already played this turn
-    if (currentTrick.find((t) => t.player === playerIndex)) {
-      console.error(`Player ${playerIndex + 1} has already played in this trick.`);
-      return;
-    }
+  // Prevent playing a card if the player has already played this turn
+  if (currentTrick.find((t) => t.player === playerIndex)) {
+    console.error(`Player ${playerIndex + 1} has already played in this trick.`);
+    return;
+  }
 
-    const cardSuit = getCardSuit(card);
+  const cardSuit = getCardSuit(card);
 
-    // Set the leading suit if it's the first card in the trick
-    if (!leadingSuit) {
-      setLeadingSuit(cardSuit);
-    }
+  // Set the leading suit if it's the first card in the trick
+  if (!leadingSuit) {
+    setLeadingSuit(cardSuit);
+  }
 
-    // Add the card to the current trick
-    const updatedTrick = [...currentTrick, { player: playerIndex, card }];
-    setCurrentTrick(updatedTrick);
+  // Add the card to the current trick
+  const updatedTrick = [...currentTrick, { player: playerIndex, card }];
+  setCurrentTrick(updatedTrick);
 
-    // Remove the card from the player's hand
-    setHands((prevHands) =>
-      prevHands.map((hand, index) =>
-        index === playerIndex ? hand.filter((c) => c !== card) : hand
-      )
-    );
+  // Remove the card from the player's hand
+  setHands((prevHands) =>
+    prevHands.map((hand, index) =>
+      index === playerIndex ? hand.filter((c) => c !== card) : hand
+    )
+  );
 
-    // Display the played card in the center
-    setCenteredCard(card);
+  // Dynamically position cards in the center
+  const centerCards = document.querySelectorAll('.card.centered');
+  centerCards.forEach((centerCard, index) => {
+    const offsetX = index * 60 - (centerCards.length - 1) * 30; // Adjust horizontal spacing
+    const offsetY = 0; // Adjust vertical spacing if needed
+    (centerCard as HTMLElement).style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  });
 
-    console.log(`Player ${playerIndex + 1} played ${card}`);
-    console.log("Updated Trick:", updatedTrick);
+  // Display the played card in the center
+  setCenteredCard(card);
 
-    // If all players have played, process the trick
-    if (updatedTrick.length === players) {
-      console.log("Trick is complete:", updatedTrick);
+  console.log(`Player ${playerIndex + 1} played ${card}`);
+  console.log("Updated Trick:", updatedTrick);
 
-      // Call the parent callback for trick completion
-      onTrickComplete(updatedTrick);
+  // If all players have played, process the trick
+  if (updatedTrick.length === players) {
+    console.log("Trick is complete:", updatedTrick);
 
-      // Determine the winner of the trick and set the starting player for the next trick
-      const trickWinner = determineTrickWinner(updatedTrick, trumpSuit);
-      console.log(`Player ${trickWinner + 1} won the trick.`);
-      setStartingPlayer(trickWinner);
+    // Call the parent callback for trick completion
+    onTrickComplete(updatedTrick);
 
-      // Reset the trick after processing
-      setTimeout(() => {
-        console.log("Resetting current trick and leading suit...");
-        setCurrentTrick([]);
-        setLeadingSuit(null);
-        setCenteredCard(null);
-      }, 500); // Slight delay for UI updates
-    }
-  };
+    // Determine the winner of the trick and set the starting player for the next trick
+    const trickWinner = determineTrickWinner(updatedTrick, trumpSuit);
+    console.log(`Player ${trickWinner + 1} won the trick.`);
+    setStartingPlayer(trickWinner);
+
+    // Reset the trick after processing
+    setTimeout(() => {
+      console.log("Resetting current trick and leading suit...");
+      setCurrentTrick([]);
+      setLeadingSuit(null);
+      setCenteredCard(null);
+    }, 500); // Slight delay for UI updates
+  }
+};
+
 
   return (
     <>

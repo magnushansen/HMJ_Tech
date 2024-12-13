@@ -18,7 +18,7 @@ const Card: React.FC<CardProps> = ({ rank, suit, isCentered, isClickable, onClic
   const imageSrc = `/assets/${imageName}`;
 
   // Log the card's props when it is rendered
-  console.log(`Rendering card: ${rank} of ${suit}, Centered: ${isCentered}, Clickable: ${isClickable}`);
+  // console.log(`Rendering card: ${rank} of ${suit}, Centered: ${isCentered}, Clickable: ${isClickable}`);
 
   return (
     <div

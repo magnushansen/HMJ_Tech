@@ -1,21 +1,38 @@
-/* ScreTable.mpdule.css */
+/* ScoreTable.module.css */
 
 .table {
-  position: relative;
-  left: 90%;
-    border: 1px;
-    width: 10%;
-  }
-  
-  .th {
-    border: 1px solid black;
-    text-align: center;
-    padding: 8px;
-  }
-  
-  .td {
-    border: 1px solid black;
-    text-align: center;
-    padding: 8px;
-  }
-  
+  position: absolute; /* Align table precisely */
+  left: 87%; /* Position table on the right */
+  border-collapse: collapse; /* Remove gaps between table cells */
+  width: 10%; /* Reduced width for a smaller table */
+  margin: 10px; /* Add some spacing around the table */
+  background-color: #ffffff; /* Makes the table stand out */
+  font-size: 0.85em; /* Slightly smaller text size */
+}
+
+.table th {
+  border: 1px solid black; /* Border for the header cells */
+  text-align: center; /* Center-align the text */
+  padding: 8px; /* Reduced padding for header cells */
+  background-color: #f2f2f2; /* Light background color for distinction */
+  font-weight: bold; /* Make the header text bold */
+}
+
+.table td {
+  border: 1px solid black; /* Border for each cell */
+  text-align: center; /* Center-align the text */
+  padding: 6px; /* Reduced padding for table data cells */
+}
+
+.table tr:first-child th {
+  background-color: #d9edf7; /* Give the first row a distinct color */
+  font-size: 1em; /* Adjust header font size slightly */
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternating row color for better readability */
+}
+
+.table tr:nth-child(odd) {
+  background-color: #ffffff; /* Alternating row color */
+}

@@ -48,7 +48,6 @@ const CardLayout: React.FC = () => {
     trick: { player: number; card: string }[],
     setStartingPlayer: (player: number) => void
   ) => {
-    // Ensure the trick has exactly the right number of cards before processing
     if (trick.length !== 4) {
       console.error("Incomplete trick: Not all players have played.");
       return;
@@ -56,47 +55,44 @@ const CardLayout: React.FC = () => {
   
     console.log("Trick is complete:", trick);
   
-    // Determine the winner and calculate the points
     const trickWinner = determineTrickWinner(trick, trumpSuit);
     const trickPoints = calculateTrickPoints(trick);
   
     console.log(`Player ${trickWinner + 1} wins the trick. Points: ${trickPoints}`);
   
-    // Determine which team gets the points
     const winningTeam = trickWinner % 2 === 0 ? 0 : 1;
   
-    // Safely update the round scores
     setRoundScores((prevScores) => {
-      // Create a copy of the current scores
       const newScores = [...prevScores];
   
-      // Initialize scores for a new round if needed
-      if (newScores.length === 0 || newScores[newScores.length - 1].length < 2) {
-        newScores.push([0, 0]);
+      // Check if this is the first round (no previous rounds exist)
+      if (newScores.length === 0) {
+        // Initialize the first round with scores
+        const initialScores = [0, 0, 0]; // [Team 1 Total, Team 2 Total, Points Gained]
+        initialScores[winningTeam] += trickPoints; // Add points for the winning team
+        initialScores[2] = trickPoints; // Record points gained
+        newScores.push(initialScores); // Push the first round
+      } else {
+        // Handle subsequent rounds
+        const lastRound = newScores[newScores.length - 1];
+        const updatedTotals = [...lastRound]; // Copy the last round totals
+  
+        updatedTotals[winningTeam] += trickPoints; // Update team total for the winner
+        newScores.push([...updatedTotals.slice(0, 2), trickPoints]); // Add a new row with updated totals
       }
   
-      // Add the points to the appropriate team for the current round
-      const lastRound = [...newScores[newScores.length - 1]];
-      lastRound[winningTeam] += trickPoints;
-  
-      // Replace the last round with the updated scores
-      newScores[newScores.length - 1] = lastRound;
-  
       console.log(
-        `Updated Scores: Team 1: ${lastRound[0]}, Team 2: ${lastRound[1]}`
+        `Updated Scores: Team 1 Total: ${newScores[newScores.length - 1][0]}, Team 2 Total: ${newScores[newScores.length - 1][1]}, Points Gained: ${trickPoints}`
       );
   
       return newScores;
     });
   
-    // Set the winner as the starting player for the next trick
-    setStartingPlayer(trickWinner);
-  
-    // Reset the trick after processing
-    setTimeout(() => {
-      console.log("Resetting current trick...");
-    }, 500); // Small delay for UI updates
+    setStartingPlayer(trickWinner); // Set the next starting player
   };
+  
+  
+  
   
   return (
     <TurnManager players={hands.length} startingPlayer={0}>
