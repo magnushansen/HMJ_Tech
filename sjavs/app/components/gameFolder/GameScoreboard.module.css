@@ -1,0 +1,49 @@
+/* Main container for the scoreboard */
+.scoreboardContainer {
+    background-color: #eaf4fc; /* Match the background of the other table */
+    border: 2px solid #d0e6f5; /* Border for the container */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding inside the container */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a nice effect */
+    margin-top: 20px; /* Space from other elements */
+    width: 10%; /* Adjust to fit the layout */
+  }
+  
+  /* Table styling for the scoreboard */
+  .scoreboardTable {
+    border-collapse: collapse; /* Remove gaps between table cells */
+    width: 10%; /* Full width table */
+    text-align: center; /* Center-align text */
+  }
+  
+  .scoreboardTable th,
+  .scoreboardTable td {
+    border: 1px solid #d0e6f5; /* Add borders to table cells */
+    padding: 10px; /* Spacing inside the cells */
+  }
+  
+  .scoreboardTable th {
+    background-color: #d9edf7; /* Light blue header background */
+    font-weight: bold; /* Bold header text */
+  }
+  
+  .scoreboardTable td {
+    background-color: #ffffff; /* White background for data cells */
+  }
+  
+  /* Styling for the current scores display */
+  .currentScores {
+    margin-top: 20px; /* Add space between the table and current scores */
+    font-size: 1em; /* Adjust font size */
+    line-height: 1.5; /* Improve readability */
+  }
+  
+  /* Highlight winner */
+  .winner {
+    color: green;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
