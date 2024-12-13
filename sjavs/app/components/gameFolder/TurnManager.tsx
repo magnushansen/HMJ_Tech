@@ -19,10 +19,12 @@ const TurnManager: React.FC<TurnManagerProps> = ({ players, startingPlayer, chil
     setCurrentTurn(startingPlayer);
   }, [startingPlayer]);
 
+  // Move to the next player in a clockwise direction
   const nextTurn = () => {
-    setCurrentTurn((prevTurn) => (prevTurn + 1) % players); // Cycle through players
+    setCurrentTurn((prevTurn) => (prevTurn + players - 1) % players); // Cycle through players in reverse order
   };
 
+  // Set the starting player for the next round
   const setStartingPlayer = (player: number) => {
     setCurrentTurn(player);
   };
