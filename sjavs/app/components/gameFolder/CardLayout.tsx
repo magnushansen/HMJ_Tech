@@ -1,5 +1,3 @@
-// CardLayout.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +5,7 @@ import Card from "./Cards";
 import TrickManager from "./TrickManager";
 import TurnManager from "./TurnManager";
 import ScoreTable from "./ScoreTable"; 
-import Player from "./Player"; // Import the Player component
+import Player from "./Player"; 
 import styles from "./CardLayout.module.css";
 import {
   shuffleDeck,
@@ -22,9 +20,7 @@ const CardLayout: React.FC = () => {
   const [trumpSuit, setTrumpSuit] = useState<string | null>(null); // Chosen trump suit
   const [centeredCard, setCenteredCard] = useState<string | null>(null); // Track the centered card
   const [roundScores, setRoundScores] = useState<number[][]>([]); // Each entry is [team1Score, team2Score]
-  const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Current trick state
 
-  // Function to start the game
   const startGame = () => {
     const deck = shuffleDeck();
     const dealtHands = dealCards(deck);
@@ -44,6 +40,18 @@ const CardLayout: React.FC = () => {
     startGame(); // Start the game automatically when the component mounts
   }, []);
 
+  // UseEffect to reshuffle and redeal cards if all players are out of cards
+  useEffect(() => {
+    const allHandsEmpty = hands.every((hand) => hand.length === 0);
+
+    if (allHandsEmpty) {
+      console.log("All players are out of cards. Reshuffling and redealing...");
+      const newDeck = shuffleDeck(); // Shuffle a new deck
+      const newHands = dealCards(newDeck); // Deal cards to players
+      setHands(newHands); // Reset the hands
+    }
+  }, [hands]);
+
   const handleTrickComplete = (
     trick: { player: number; card: string }[],
     setStartingPlayer: (player: number) => void
@@ -52,48 +60,41 @@ const CardLayout: React.FC = () => {
       console.error("Incomplete trick: Not all players have played.");
       return;
     }
-  
+
     console.log("Trick is complete:", trick);
-  
+
     const trickWinner = determineTrickWinner(trick, trumpSuit);
     const trickPoints = calculateTrickPoints(trick);
-  
+
     console.log(`Player ${trickWinner + 1} wins the trick. Points: ${trickPoints}`);
-  
+
     const winningTeam = trickWinner % 2 === 0 ? 0 : 1;
-  
+
     setRoundScores((prevScores) => {
       const newScores = [...prevScores];
-  
-      // Check if this is the first round (no previous rounds exist)
+
       if (newScores.length === 0) {
-        // Initialize the first round with scores
         const initialScores = [0, 0, 0]; // [Team 1 Total, Team 2 Total, Points Gained]
-        initialScores[winningTeam] += trickPoints; // Add points for the winning team
-        initialScores[2] = trickPoints; // Record points gained
-        newScores.push(initialScores); // Push the first round
+        initialScores[winningTeam] += trickPoints;
+        initialScores[2] = trickPoints;
+        newScores.push(initialScores);
       } else {
-        // Handle subsequent rounds
         const lastRound = newScores[newScores.length - 1];
-        const updatedTotals = [...lastRound]; // Copy the last round totals
-  
-        updatedTotals[winningTeam] += trickPoints; // Update team total for the winner
-        newScores.push([...updatedTotals.slice(0, 2), trickPoints]); // Add a new row with updated totals
+        const updatedTotals = [...lastRound];
+        updatedTotals[winningTeam] += trickPoints;
+        newScores.push([...updatedTotals.slice(0, 2), trickPoints]);
       }
-  
+
       console.log(
         `Updated Scores: Team 1 Total: ${newScores[newScores.length - 1][0]}, Team 2 Total: ${newScores[newScores.length - 1][1]}, Points Gained: ${trickPoints}`
       );
-  
+
       return newScores;
     });
-  
+
     setStartingPlayer(trickWinner); // Set the next starting player
   };
-  
-  
-  
-  
+
   return (
     <TurnManager players={hands.length} startingPlayer={0}>
       {({ currentTurn, nextTurn, setStartingPlayer }) => (
@@ -101,17 +102,16 @@ const CardLayout: React.FC = () => {
           players={hands.length}
           trumpSuit={trumpSuit}
           hands={hands}
-          setHands={setHands} // Pass the setHands function to update player hands
-          setCenteredCard={setCenteredCard} // Pass setCenteredCard to display the played card
-          setStartingPlayer={setStartingPlayer} // Pass setStartingPlayer to TrickManager
-          onTrickComplete={(trick) => handleTrickComplete(trick, setStartingPlayer)} // Process when the trick is complete
+          setHands={setHands}
+          setCenteredCard={setCenteredCard}
+          setStartingPlayer={setStartingPlayer}
+          onTrickComplete={(trick) => handleTrickComplete(trick, setStartingPlayer)}
         >
           {({ leadingSuit, validatePlay, playCard }) => (
             <div className={styles.gameContainer}>
               {trumpSuit && <p className={styles.trumpSuit}>Trump Suit: {trumpSuit}</p>}
               <p className={styles.currentTurn}>Player Turn: {currentTurn + 1}</p>
 
-              {/* Centered card display */}
               {centeredCard && (
                 <div className={styles.centeredContainer}>
                   <Card
@@ -125,7 +125,6 @@ const CardLayout: React.FC = () => {
                 </div>
               )}
 
-              {/* Player hands */}
               {hands.map((hand, playerIndex) => (
                 <Player
                   key={playerIndex}
@@ -140,7 +139,6 @@ const CardLayout: React.FC = () => {
                 />
               ))}
 
-              {/* Score Table */}
               <ScoreTable roundScores={roundScores} />
             </div>
           )}

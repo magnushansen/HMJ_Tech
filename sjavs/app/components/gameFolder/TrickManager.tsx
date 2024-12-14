@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { determineTrickWinner, getCardSuit, playerHasSuit } from "../../../lib/gameUtils";
+import { dealCards, determineTrickWinner, getCardSuit, playerHasSuit, shuffleDeck } from "../../../lib/gameUtils";
 
 interface TrickManagerProps {
   players: number; // Number of players
@@ -65,65 +65,51 @@ const TrickManager: React.FC<TrickManagerProps> = ({
   };
 
   const playCard = (card: string, playerIndex: number) => {
-  // Prevent playing a card if the player has already played this turn
-  if (currentTrick.find((t) => t.player === playerIndex)) {
-    console.error(`Player ${playerIndex + 1} has already played in this trick.`);
-    return;
-  }
-
-  const cardSuit = getCardSuit(card);
-
-  // Set the leading suit if it's the first card in the trick
-  if (!leadingSuit) {
-    setLeadingSuit(cardSuit);
-  }
-
-  // Add the card to the current trick
-  const updatedTrick = [...currentTrick, { player: playerIndex, card }];
-  setCurrentTrick(updatedTrick);
-
-  // Remove the card from the player's hand
-  setHands((prevHands) =>
-    prevHands.map((hand, index) =>
-      index === playerIndex ? hand.filter((c) => c !== card) : hand
-    )
-  );
-
-  // Dynamically position cards in the center
-  const centerCards = document.querySelectorAll('.card.centered');
-  centerCards.forEach((centerCard, index) => {
-    const offsetX = index * 60 - (centerCards.length - 1) * 30; // Adjust horizontal spacing
-    const offsetY = 0; // Adjust vertical spacing if needed
-    (centerCard as HTMLElement).style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-  });
-
-  // Display the played card in the center
-  setCenteredCard(card);
-
-  console.log(`Player ${playerIndex + 1} played ${card}`);
-  console.log("Updated Trick:", updatedTrick);
-
-  // If all players have played, process the trick
-  if (updatedTrick.length === players) {
-    console.log("Trick is complete:", updatedTrick);
-
-    // Call the parent callback for trick completion
-    onTrickComplete(updatedTrick);
-
-    // Determine the winner of the trick and set the starting player for the next trick
-    const trickWinner = determineTrickWinner(updatedTrick, trumpSuit);
-    console.log(`Player ${trickWinner + 1} won the trick.`);
-    setStartingPlayer(trickWinner);
-
-    // Reset the trick after processing
-    setTimeout(() => {
-      console.log("Resetting current trick and leading suit...");
-      setCurrentTrick([]);
-      setLeadingSuit(null);
-      setCenteredCard(null);
-    }, 500); // Slight delay for UI updates
-  }
-};
+    if (currentTrick.find((t) => t.player === playerIndex)) {
+      console.error(`Player ${playerIndex + 1} has already played in this trick.`);
+      return;
+    }
+  
+    const cardSuit = getCardSuit(card);
+  
+    if (!leadingSuit) {
+      setLeadingSuit(cardSuit);
+    }
+  
+    const updatedTrick = [...currentTrick, { player: playerIndex, card }];
+    setCurrentTrick(updatedTrick);
+  
+    setHands((prevHands) =>
+      prevHands.map((hand, index) =>
+        index === playerIndex ? hand.filter((c) => c !== card) : hand
+      )
+    );
+  
+    setCenteredCard(card);
+  
+    if (updatedTrick.length === players) {
+      onTrickComplete(updatedTrick); // Process the completed trick
+  
+      const trickWinner = determineTrickWinner(updatedTrick, trumpSuit);
+      setStartingPlayer(trickWinner);
+  
+      setTimeout(() => {
+        setCurrentTrick([]);
+        setLeadingSuit(null);
+        setCenteredCard(null);
+  
+        // Check if all players' hands are empty
+        const allHandsEmpty = hands.every((hand) => hand.length === 0);
+        if (allHandsEmpty) {
+          console.log("All players are out of cards. Reshuffling and redealing...");
+          const newDeck = shuffleDeck(); // Create a new deck
+          const newHands = dealCards(newDeck); // Deal hands to players
+          setHands(newHands); // Reset the hands
+        }
+      }, 500); // Slight delay for better UI experience
+    }
+  };
+  
 
 
   return (
