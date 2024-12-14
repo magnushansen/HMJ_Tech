@@ -34,7 +34,6 @@ const CardLayout: React.FC = () => {
       setRoundScores([]); // Reset scores for a new game
       setStartingPlayer(trumpInfo.trumpPlayer); // Set the starting player
     } else {
-      alert("Re-dealing as no player has a strong trump suit.");
       startGame(); // Retry if trump is not chosen
     }
   };

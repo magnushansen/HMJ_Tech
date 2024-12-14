@@ -15,15 +15,15 @@ const GameScoreboard: React.FC<GameScoreboardProps> = ({
   winner,
 }) => {
   return (
-    <div className={styles.gameScoreboard}>
-      <h2>Game Scoreboard</h2>
+    <div className={styles.scoreboardContainer}>
+      <h2 className={styles.title}>Game Scoreboard</h2>
       <table className={styles.scoreboardTable}>
         <thead>
           <tr>
             <th>Round</th>
-            <th>Team 1 Points</th>
-            <th>Team 2 Points</th>
-            <th>Change in Score</th>
+            <th>Team 1</th>
+            <th>Team 2</th>
+            <th>Change</th>
           </tr>
         </thead>
         <tbody>
@@ -38,8 +38,14 @@ const GameScoreboard: React.FC<GameScoreboardProps> = ({
         </tbody>
       </table>
       <div className={styles.currentScores}>
-        <p>Team 1 Remaining Points: {scores.team1}</p>
-        <p>Team 2 Remaining Points: {scores.team2}</p>
+        <div className={styles.teamScoreBox}>
+          <p>Team 1</p>
+          <p>{scores.team1}</p>
+        </div>
+        <div className={styles.teamScoreBox}>
+          <p>Team 2</p>
+          <p>{scores.team2}</p>
+        </div>
       </div>
       {winner && <p className={styles.winner}>Winner: {winner}</p>}
     </div>

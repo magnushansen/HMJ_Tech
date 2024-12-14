@@ -42,7 +42,6 @@ const CardLayout: React.FC = () => {
       setScoreHistory([]); // Clear the score history
       setTricksPlayed(0); // Reset the trick counter
     } else {
-      alert("Re-dealing as no player has a strong trump suit.");
       startGame(); // Retry if trump is not chosen
     }
   };
@@ -141,7 +140,7 @@ const CardLayout: React.FC = () => {
 
   return (
     <div className={styles.gameContainer}>
-      <h1>Playing Card Layout</h1>
+      <h1>Sjavs</h1>
 
       {/* Game Scoreboard */}
       <GameScoreboard

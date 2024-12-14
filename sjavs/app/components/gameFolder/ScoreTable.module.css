@@ -1,38 +1,36 @@
-/* ScoreTable.module.css */
-
 .table {
-  position: absolute; /* Align table precisely */
-  left: 87%; /* Position table on the right */
-  border-collapse: collapse; /* Remove gaps between table cells */
-  width: 10%; /* Reduced width for a smaller table */
-  margin: 10px; /* Add some spacing around the table */
-  background-color: #ffffff; /* Makes the table stand out */
-  font-size: 0.85em; /* Slightly smaller text size */
+  position: absolute;
+  left: 87%;
+  border-collapse: collapse;
+  width: 10%;
+  margin: 10px;
+  background-color: #ffffff;
+  font-size: 0.85em;
 }
 
 .table th {
-  border: 1px solid black; /* Border for the header cells */
-  text-align: center; /* Center-align the text */
-  padding: 8px; /* Reduced padding for header cells */
-  background-color: #f2f2f2; /* Light background color for distinction */
-  font-weight: bold; /* Make the header text bold */
+  border: 1px solid black;
+  text-align: center;
+  padding: 8px;
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 .table td {
-  border: 1px solid black; /* Border for each cell */
-  text-align: center; /* Center-align the text */
-  padding: 6px; /* Reduced padding for table data cells */
+  border: 1px solid black;
+  text-align: center;
+  padding: 6px;
 }
 
 .table tr:first-child th {
-  background-color: #d9edf7; /* Give the first row a distinct color */
-  font-size: 1em; /* Adjust header font size slightly */
+  background-color: #d9edf7;
+  font-size: 1em;
 }
 
 .table tr:nth-child(even) {
-  background-color: #f9f9f9; /* Alternating row color for better readability */
+  background-color: #f9f9f9;
 }
 
 .table tr:nth-child(odd) {
-  background-color: #ffffff; /* Alternating row color */
+  background-color: #ffffff;
 }
