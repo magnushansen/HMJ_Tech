@@ -1,9 +1,13 @@
-//TrickManager.tsx
-
 "use client";
 
 import React, { useState } from "react";
-import { dealCards, determineTrickWinner, getCardSuit, playerHasSuit, shuffleDeck } from "../../../lib/gameUtils";
+import {
+  determineTrickWinner,
+  getCardSuit,
+  playerHasSuit,
+  shuffleDeck,
+  dealCards,
+} from "../../../lib/gameUtils";
 
 interface TrickManagerProps {
   players: number; // Number of players
@@ -31,86 +35,72 @@ const TrickManager: React.FC<TrickManagerProps> = ({
   setStartingPlayer,
   children,
 }) => {
-  const [leadingSuit, setLeadingSuit] = useState<string | null>(null); // The suit of the first card played in a trick
-  const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Cards currently played in the ongoing trick
+  const [leadingSuit, setLeadingSuit] = useState<string | null>(null); // Suit of the first card played
+  const [currentTrick, setCurrentTrick] = useState<{ player: number; card: string }[]>([]); // Cards played in the current trick
 
-  /**
-   * Validates whether the player can legally play the selected card.
-   * @param card - The card the player is attempting to play
-   * @param playerIndex - The index of the player attempting to play the card
-   * @returns {boolean} - Whether the card can be played
-   */
   const validatePlay = (card: string, playerIndex: number): boolean => {
     const cardSuit = getCardSuit(card);
 
-    // If there is no leading suit yet, any card is valid
-    if (!leadingSuit) {
-      return true;
-    }
+    if (!leadingSuit) return true; // If no leading suit, any card is valid
 
-    // Check if the player has cards of the leading suit
     const hasLeadingSuit = playerHasSuit(hands[playerIndex], leadingSuit);
     if (hasLeadingSuit) {
       return cardSuit === leadingSuit; // Must follow the leading suit
     }
 
-    // Check if the player has trump cards
-    const hasTrumpSuit = trumpSuit ? playerHasSuit(hands[playerIndex], trumpSuit) : false;
+    const hasTrumpSuit = trumpSuit
+      ? playerHasSuit(hands[playerIndex], trumpSuit)
+      : false;
     if (hasTrumpSuit) {
-      return cardSuit === trumpSuit; // Must play trump suit if available
+      return cardSuit === trumpSuit; // Must play trump if available
     }
 
-    // If no leading suit or trump cards, any card is valid
-    return true;
+    return true; // If no valid options, any card can be played
   };
 
   const playCard = (card: string, playerIndex: number) => {
     if (currentTrick.find((t) => t.player === playerIndex)) {
-      console.error(`Player ${playerIndex + 1} has already played in this trick.`);
+      console.error(`Player ${playerIndex + 1} has already played.`);
       return;
     }
-  
+
     const cardSuit = getCardSuit(card);
-  
-    if (!leadingSuit) {
-      setLeadingSuit(cardSuit);
-    }
-  
+
+    if (!leadingSuit) setLeadingSuit(cardSuit);
+
     const updatedTrick = [...currentTrick, { player: playerIndex, card }];
     setCurrentTrick(updatedTrick);
-  
+
     setHands((prevHands) =>
       prevHands.map((hand, index) =>
         index === playerIndex ? hand.filter((c) => c !== card) : hand
       )
     );
-  
+
     setCenteredCard(card);
-  
+
     if (updatedTrick.length === players) {
-      onTrickComplete(updatedTrick); // Process the completed trick
-  
+      onTrickComplete(updatedTrick); // Process completed trick
+
       const trickWinner = determineTrickWinner(updatedTrick, trumpSuit);
       setStartingPlayer(trickWinner);
-  
+
       setTimeout(() => {
         setCurrentTrick([]);
         setLeadingSuit(null);
         setCenteredCard(null);
-  
-        // Check if all players' hands are empty
+
+        // Check if all hands are empty
         const allHandsEmpty = hands.every((hand) => hand.length === 0);
         if (allHandsEmpty) {
-          console.log("All players are out of cards. Reshuffling and redealing...");
+          console.log("All players are out of cards. Reshuffling...");
           const newDeck = shuffleDeck(); // Create a new deck
-          const newHands = dealCards(newDeck); // Deal hands to players
-          setHands(newHands); // Reset the hands
+          const newHands = dealCards(newDeck); // Deal new hands
+          setHands(newHands); // Update the hands
         }
-      }, 500); // Slight delay for better UI experience
+      }, 500);
     }
   };
-  
-
 
   return (
     <>
