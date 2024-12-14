@@ -4,15 +4,15 @@ import React, { useState, useEffect } from "react";
 import Card from "./Cards";
 import TrickManager from "./TrickManager";
 import TurnManager from "./TurnManager";
-import ScoreTable from "./ScoreTable"; 
-import Player from "./Player"; 
+import ScoreTable from "./ScoreTable";
+import Player from "./Player";
 import styles from "./CardLayout.module.css";
 import {
   shuffleDeck,
   dealCards,
   chooseTrump,
-  determineTrickWinner, 
-  calculateTrickPoints
+  determineTrickWinner,
+  calculateTrickPoints,
 } from "../../../lib/gameUtils";
 
 const CardLayout: React.FC = () => {
@@ -45,10 +45,13 @@ const CardLayout: React.FC = () => {
     const allHandsEmpty = hands.every((hand) => hand.length === 0);
 
     if (allHandsEmpty) {
-      console.log("All players are out of cards. Reshuffling and redealing...");
+      console.log("All players are out of cards. Reshuffling, redealing, and resetting scores...");
+
       const newDeck = shuffleDeck(); // Shuffle a new deck
       const newHands = dealCards(newDeck); // Deal cards to players
       setHands(newHands); // Reset the hands
+
+      setRoundScores([]); // Reset the scoreboard for a new round
     }
   }, [hands]);
 
