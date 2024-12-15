@@ -48,12 +48,12 @@ const TrickManager: React.FC<TrickManagerProps> = ({
       return cardSuit === leadingSuit; // Must follow the leading suit
     }
 
-    const hasTrumpSuit = trumpSuit
-      ? playerHasSuit(hands[playerIndex], trumpSuit)
-      : false;
-    if (hasTrumpSuit) {
-      return cardSuit === trumpSuit; // Must play trump if available
-    }
+    // const hasTrumpSuit = trumpSuit
+    //   ? playerHasSuit(hands[playerIndex], trumpSuit)
+    //   : false;
+    // if (hasTrumpSuit) {
+    //   return cardSuit === trumpSuit; // Must play trump if available
+    // }
 
     return true; // If no valid options, any card can be played
   };
