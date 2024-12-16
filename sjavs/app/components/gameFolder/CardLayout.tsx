@@ -19,6 +19,7 @@ import {
 } from "../../../lib/gameUtils";
 
 const CardLayout: React.FC = () => {
+  const [round, setRound] = useState(1);
   const [hands, setHands] = useState<string[][]>([]); // Hands for each player
   const [trumpSuit, setTrumpSuit] = useState<string | null>(null); // Chosen trump suit
   const [centeredCard, setCenteredCard] = useState<string | null>(null); // Track the centered card
@@ -118,12 +119,15 @@ const CardLayout: React.FC = () => {
       setScoreHistory((prevHistory) => [
         ...prevHistory,
         {
-          round: roundScores.length,
+          round: round, // Use the current round number
           team1: updatedScores.team1,
           team2: updatedScores.team2,
           change: `-${team1Decrement} / -${team2Decrement}`,
         },
       ]);
+  
+      // Increment the round number
+      setRound((prevRound) => (prevRound % 8) + 1);
   
       // Reset the round scores for the next round
       setRoundScores([]);
