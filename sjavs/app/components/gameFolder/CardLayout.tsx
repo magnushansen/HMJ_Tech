@@ -58,19 +58,19 @@ const CardLayout: React.FC = () => {
       console.error("Incomplete trick: Not all players have played.");
       return;
     }
-
+  
     console.log("Trick is complete:", trick);
-
+  
     const trickWinner = determineTrickWinner(trick, trumpSuit);
     const trickPoints = calculateTrickPoints(trick);
-
+  
     console.log(`Player ${trickWinner + 1} wins the trick. Points: ${trickPoints}`);
-
+  
     const winningTeam = trickWinner % 2 === 0 ? 0 : 1;
-
+  
     setRoundScores((prevScores) => {
       const newScores = [...prevScores];
-
+  
       if (newScores.length === 0) {
         const initialScores = [0, 0, 0]; // [Team 1 Total, Team 2 Total, Points Gained]
         initialScores[winningTeam] += trickPoints;
@@ -82,39 +82,39 @@ const CardLayout: React.FC = () => {
         updatedTotals[winningTeam] += trickPoints;
         newScores.push([...updatedTotals.slice(0, 2), trickPoints]);
       }
-
+  
       return newScores;
     });
-
+  
     setTricksPlayed((prev) => prev + 1);
-
+  
     if (tricksPlayed + 1 === 8) {
       console.log("All tricks are complete. Resetting round.");
       setTricksPlayed(0);
-
+  
       const lastRoundScores = roundScores[roundScores.length - 1] || [0, 0, 0];
       const team1Points = lastRoundScores[0];
       const team2Points = lastRoundScores[1];
-
+  
       const [team1Decrement, team2Decrement] = calculateFinalScore(
         team1Points,
         team2Points,
         trumpSuit
       );
-
+  
       const updatedScores = {
         team1: Math.max(0, gameScores.team1 - team1Decrement),
         team2: Math.max(0, gameScores.team2 - team2Decrement),
       };
-
+  
       setGameScores(updatedScores);
-
+  
       if (updatedScores.team1 === 0 || updatedScores.team2 === 0) {
         const winner = updatedScores.team1 === 0 ? "Team 1" : "Team 2";
         handleGameEnd(winner);
         return;
       }
-
+  
       setScoreHistory((prevHistory) => [
         ...prevHistory,
         {
@@ -124,14 +124,18 @@ const CardLayout: React.FC = () => {
           change: `-${team1Decrement} / -${team2Decrement}`,
         },
       ]);
-
+  
+      // Reset the round scores for the next round
+      setRoundScores([]);
+  
       const newDeck = shuffleDeck();
       const newHands = dealCards(newDeck);
       setHands(newHands);
     }
-
+  
     setStartingPlayer(trickWinner); // Set the next starting player
   };
+  
 
   const handleGameEnd = (winner: string) => {
     alert(`Game Over! ${winner} wins!`);
