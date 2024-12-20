@@ -18,7 +18,7 @@ function shuffleDeck() {
 
     return deck;
 }
-
+//uu
 function dealCards(deck) {
     const hands = [[], [], [], []];
     for (let i = 0; i < 8; i++) {
