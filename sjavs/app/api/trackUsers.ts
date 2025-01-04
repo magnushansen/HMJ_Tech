@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from("session")
         .upsert(
             { 
-                id: session,            // Unique session identifier
+                id: session,            // Unique session identifier dsdsads
                 active: true,           // Ensure session remains active
                 player_count: player_count, // Update player count
             },
